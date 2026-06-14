@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Admin - Collège Privé Les Cartésiens</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0a0f 0%, #4a0012 40%, #800020 70%, #a00030 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: linear-gradient(145deg, #faf6f2, #f0ebe5);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.3), -10px -10px 30px rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        .school-badge {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #d4af37, #f0d878, #d4af37);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            margin-bottom: 16px;
+        }
+        .school-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            color: #800020;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #a09088;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5a4a42;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e0d8d4;
+            border-radius: 12px;
+            font-size: 1em;
+            background: linear-gradient(145deg, #ffffff, #faf8f6);
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #800020;
+            box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(145deg, #800020, #a00030);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(128, 0, 32, 0.3);
+        }
+        .error {
+            color: #c62828;
+            font-size: 0.85em;
+            margin-top: 10px;
+            display: none;
+        }
+        .error.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="school-badge">🎓</div>
+        <h1 class="school-name">Collège Privé Les Cartésiens</h1>
+        <p class="subtitle">Espace Administrateur</p>
+        
+        <div class="form-group">
+            <label>Identifiant</label>
+            <input type="text" id="username" placeholder="admin">
+        </div>
+        <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+        
+        <button class="btn-login" onclick="login()">Se connecter</button>
+        <p class="error" id="error">Identifiants incorrects</p>
+    </div>
+
+    <script>
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    localStorage.setItem('adminToken', data.token);
+                    window.location.href = '/admin';
+                } else {
+                    document.getElementById('error').classList.add('show');
+                }
+            } catch (err) {
+                document.getElementById('error').textContent = 'Erreur de connexion';
+                document.getElementById('error').classList.add('show');
+            }
+        }
+        
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+    </script>
+</body>
+</html>
