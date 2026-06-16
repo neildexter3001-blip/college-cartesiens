@@ -423,10 +423,6 @@
             font-size: 12px;
         }
         .data-table thead { background: linear-gradient(145deg, #fdf6f8, #f5f0ec); }
-        .table-scroll {
-            overflow: auto;
-            max-height: 65vh;
-        }
         .data-table th {
             padding: 14px 16px;
             text-align: left;
@@ -435,12 +431,8 @@
             font-size: 0.82em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            border-bottom: 2px solid #e0d5d8;
             white-space: nowrap;
-            position: sticky;
-            top: 0;
-            z-index: 5;
-            background: #fdf6f3;
-            box-shadow: inset 0 -2px 0 #e0d5d8;
         }
         .data-table th.sortable { cursor: pointer; user-select: none; transition: color 0.3s ease; }
         .data-table th.sortable:hover { color: #d4af37; }
@@ -747,8 +739,7 @@
             .stat-value { font-size: 1.2em; }
             .stat-label { font-size: 0.68em; }
             .stat-change { font-size: 0.65em; }
-            .data-table { white-space: nowrap; }
-            .table-scroll { max-height: 70vh; }
+            .data-table { display: block; overflow-x: auto; white-space: nowrap; }
             .header { padding: 14px 12px 28px; }
             .main-content { padding: 16px 12px; }
             .table-header { padding: 10px 12px; flex-direction: column; align-items: flex-start; gap: 4px; }
@@ -878,7 +869,7 @@
                 <div class="table-title">📚 Liste des Élèves</div>
                 <div class="table-count" id="table-count">0 élève(s)</div>
             </div>
-            <div class="table-scroll">
+            <div style="overflow-x: auto;">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -896,6 +887,7 @@
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
+            <div class="pagination" id="pagination"></div>
         </div>
     </div>
 
@@ -1080,9 +1072,12 @@ function updateDashboard() {
 // ===== TABLE =====
 function renderTable() {
     const tbody = document.getElementById('table-body');
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageData = filteredData.slice(start, end);
 
     tbody.innerHTML = '';
-    filteredData.forEach((item) => {
+    pageData.forEach((item) => {
         const tr = document.createElement('tr');
         if (selectedRows.has(item.matricule)) tr.classList.add('selected');
 
@@ -1108,13 +1103,13 @@ function renderTable() {
     });
 
     document.getElementById('table-count').textContent = filteredData.length + ' élève(s)';
+    renderPagination();
     updateDeleteButton();
 }
 
 function renderPagination() {
-    const pagination = document.getElementById('pagination');
-    if (!pagination) return; // pagination supprimée : affichage vertical complet
     const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+    const pagination = document.getElementById('pagination');
     let html = '';
 
     html += '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '>←</button>';
