@@ -1376,6 +1376,14 @@
                     parNiveau[c.niveau_label].push(c);
                 });
 
+                if (classes.length === 0) {
+                    select.innerHTML = '<option value="">⚠️ Aucune classe disponible — contactez l\'administration</option>';
+                    select.disabled = true;
+                    console.warn('Aucune classe disponible : l\'administration doit d\'abord les créer dans l\'espace admin.');
+                    return;
+                }
+
+                select.disabled = false;
                 let html = '<option value="">Sélectionnez...</option>';
                 Object.keys(parNiveau).forEach(niveauLabel => {
                     html += `<optgroup label="${niveauLabel}">`;
@@ -1386,11 +1394,11 @@
                 });
                 select.innerHTML = html;
 
-                if (classes.length === 0) {
-                    console.warn('Aucune classe disponible : l\'administration doit d\'abord les créer dans l\'espace admin.');
-                }
             } catch (err) {
                 console.error('Erreur chargement des classes:', err);
+                const select = document.getElementById('classe');
+                select.innerHTML = '<option value="">⚠️ Erreur de connexion au serveur</option>';
+                select.disabled = true;
             }
         }
 
