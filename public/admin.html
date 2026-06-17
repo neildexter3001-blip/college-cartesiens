@@ -971,15 +971,19 @@
 </div>
 
 <div class="modal-overlay" id="modal-classes">
-    <div class="modal" style="max-width: 640px;">
+    <div class="modal" style="max-width: 660px;">
         <div class="modal-header">
             <div class="modal-title">🏫 Gérer les Classes</div>
             <button class="modal-close" onclick="closeModal('modal-classes')">&times;</button>
         </div>
         <div class="modal-body">
-            <p style="font-size: 0.85em; color: #a09088; margin-bottom: 16px; line-height: 1.5;">
-                Indique, pour chaque niveau, le nombre réel de classes de ton établissement (ex: 6 classes de 6ème). Les classes générées (6ème 1, 6ème 2...) apparaîtront automatiquement dans le menu "Classe" de la page d'inscription des parents.
-            </p>
+            <div style="background: linear-gradient(145deg, #fff8e1, #ffecb3); border: 1px solid #ffe082; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.84em; color: #5d4037; line-height: 1.7;">
+                💡 <strong>Comment créer des classes :</strong><br>
+                1. Choisis un niveau (ex : <em>6ème</em>)<br>
+                2. Clique sur <strong>＋</strong> pour indiquer le nombre de classes (ex : 3 pour avoir 6ème 1, 6ème 2, 6ème 3)<br>
+                3. Clique <strong>✅ Créer</strong> pour enregistrer<br>
+                Les classes créées s'afficheront dans la page d'inscription des parents.
+            </div>
             <div id="classes-niveaux-list"></div>
         </div>
         <div class="modal-footer">
@@ -1106,26 +1110,37 @@ function renderClassesModal() {
     const container = document.getElementById('classes-niveaux-list');
     container.innerHTML = niveauxList.map(niv => {
         const classesNiveau = allClasses.filter(c => c.niveau === niv.code).sort((a, b) => a.numero - b.numero);
+        const nbActuel = classesNiveau.length;
+
         const chips = classesNiveau.length > 0
             ? classesNiveau.map(c =>
                 '<span class="classe-chip">' + c.label +
                 '<button onclick="supprimerClasse(\'' + c.code + '\')" title="Supprimer cette classe">×</button></span>'
               ).join('')
-            : '<span class="classe-empty-hint">Aucune classe créée pour ce niveau pour l\'instant</span>';
+            : '<span class="classe-empty-hint">Aucune classe — utilise ＋ puis ✅ Créer pour en ajouter</span>';
 
         return `
             <div class="niveau-block">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-                    <strong style="font-family:'Playfair Display',serif;color:#800020;">${niv.label}</strong>
+                    <strong style="font-family:'Playfair Display',serif;color:#800020;font-size:1.05em;">${niv.label}</strong>
                     <div style="display:flex;gap:6px;align-items:center;">
-                        <input type="number" min="0" max="50" class="niveau-input" id="nb-${niv.code}" value="${classesNiveau.length}" title="Nombre de classes pour ce niveau">
-                        <button class="btn btn-info" style="padding:7px 14px;font-size:0.78em;" onclick="genererClasses('${niv.code}')">Mettre à jour</button>
+                        <button onclick="ajusterNombre('${niv.code}',-1)" style="width:32px;height:32px;border-radius:8px;border:1.5px solid #e0d5d8;background:linear-gradient(145deg,#fff,#f8f5f3);color:#800020;font-size:1.1em;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 6px rgba(0,0,0,0.08);">−</button>
+                        <input type="number" min="0" max="50" class="niveau-input" id="nb-${niv.code}" value="${nbActuel}" title="Nombre de classes pour ce niveau" style="text-align:center;">
+                        <button onclick="ajusterNombre('${niv.code}',1)" style="width:32px;height:32px;border-radius:8px;border:1.5px solid #e0d5d8;background:linear-gradient(145deg,#fff,#f8f5f3);color:#800020;font-size:1.1em;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 6px rgba(0,0,0,0.08);">＋</button>
+                        <button class="btn btn-success" style="padding:7px 16px;font-size:0.82em;gap:5px;" onclick="genererClasses('${niv.code}')">✅ Créer</button>
                     </div>
                 </div>
                 <div style="display:flex;flex-wrap:wrap;gap:6px;">${chips}</div>
             </div>
         `;
     }).join('');
+}
+
+function ajusterNombre(niveauCode, delta) {
+    const input = document.getElementById('nb-' + niveauCode);
+    const val = parseInt(input.value, 10) || 0;
+    const nouveau = Math.max(0, Math.min(50, val + delta));
+    input.value = nouveau;
 }
 
 async function genererClasses(niveauCode) {
