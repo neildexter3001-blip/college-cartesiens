@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Collège Privé Les Cartésiens - Inscription</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e8e0d8 0%, #d4c8bc 50%, #c8b8a8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 780px;
+            perspective: 1000px;
+            background: linear-gradient(145deg, #faf6f2, #f0ebe5);
+            border-radius: 24px;
+            box-shadow: 
+                20px 20px 60px rgba(128, 0, 32, 0.15),
+                -20px -20px 60px rgba(255, 255, 255, 0.8),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) rotateX(5deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        /* ===== 3D HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #1a0a0f 0%, #4a0012 40%, #800020 70%, #a00030 100%);
+            color: white;
+            padding: 24px 40px 38px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #d4af37, #f0d878, #d4af37, transparent);
+            z-index: 2;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 250px;
+            height: 250px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .header-circle-2 {
+            position: absolute;
+            bottom: -60px;
+            left: -60px;
+            width: 180px;
+            height: 180px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .header-circle-3 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            border: 1px solid rgba(212, 175, 55, 0.06);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .header-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            background: #ffffff;
+            border-radius: 50%;
+            margin-bottom: 16px;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.18),
+                inset 0 -2px 4px rgba(0,0,0,0.05);
+            font-size: 1.6em;
+            transform: translateZ(30px);
+            overflow: hidden;
+            padding: 4px;
+        }
+
+        .school-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .school-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #ffffff, #f0d878, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transform: translateZ(20px);
+        }
+
+        .school-subtitle {
+            font-size: 0.85em;
+            opacity: 0.7;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            color: #d4af37;
+            transform: translateZ(15px);
+        }
+
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 0 auto 20px;
+            border-radius: 2px;
+        }
+
+        .slogan {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95em;
+            font-weight: 300;
+            font-style: italic;
+            opacity: 0.8;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.85);
+            transform: translateZ(10px);
+        }
+
+        .header-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            z-index: 2;
+        }
+
+        .header-wave svg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+        }
+
+        /* ===== FORM CONTAINER ===== */
+        .form-container {
+            padding: 28px 32px;
+        }
+
+        /* ===== 3D PROGRESS BAR ===== */
+        .progress-container {
+            margin-bottom: 24px;
+            display: none;
+            background: linear-gradient(145deg, #f0ebe5, #faf6f2);
+            padding: 12px 16px;
+            border-radius: 14px;
+            box-shadow: 
+                4px 4px 10px rgba(128, 0, 32, 0.05),
+                -4px -4px 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(145deg, #e0d8d0, #f5f0ec);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.5);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #800020, #c00040, #d4af37);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(128, 0, 32, 0.3);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* ===== 3D NOTIFICATION ===== */
+        .notification {
+            display: none;
+            padding: 12px 18px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            font-weight: 600;
+            font-size: 0.88em;
+            align-items: center;
+            gap: 10px;
+            animation: shake 0.5s ease;
+            box-shadow: 
+                6px 6px 15px rgba(0,0,0,0.08),
+                -6px -6px 15px rgba(255,255,255,0.8);
+        }
+
+        .notification.show {
+            display: flex;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            width: auto;
+            max-width: 88%;
+            min-width: 240px;
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.5;
+            justify-content: center;
+            text-align: center;
+            padding: 20px 24px;
+            animation: notifPop 0.28s ease;
+            /* Le 1er shadow assombrit tout l'écran → effet panneau au centre */
+            box-shadow: 0 0 0 100vmax rgba(0,0,0,0.45), 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        @keyframes notifPop {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+            to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .notification.success {
+            background: linear-gradient(145deg, #e8f5e9, #f1f8e9);
+            color: #1b5e20;
+            border: 1px solid #c8e6c9;
+        }
+
+        .notification.error {
+            background: linear-gradient(145deg, #ffebee, #ffcdd2);
+            color: #b71c1c;
+            border: 1px solid #ffcdd2;
+        }
+
+        .notification.info {
+            background: linear-gradient(145deg, #fff8e1, #ffecb3);
+            color: #f57f17;
+            border: 1px solid #ffecb3;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* ===== 3D MATRICULE SECTION ===== */
+        .matricule-section {
+            background: linear-gradient(145deg, #fdf6f8, #ffffff);
+            border: 2px solid #800020;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            animation: pulseBorder 2.5s infinite;
+            box-shadow: 
+                8px 8px 20px rgba(128, 0, 32, 0.1),
+                -8px -8px 20px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes pulseBorder {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(128, 0, 32, 0.18), 8px 8px 20px rgba(128, 0, 32, 0.1), -8px -8px 20px rgba(255, 255, 255, 0.8); }
+            50% { box-shadow: 0 0 0 10px rgba(128, 0, 32, 0), 8px 8px 20px rgba(128, 0, 32, 0.1), -8px -8px 20px rgba(255, 255, 255, 0.8); }
+        }
+
+        .matricule-section .section-title {
+            color: #800020;
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .matricule-section .section-title::before {
+            content: '🎓';
+            font-size: 1.3em;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e0d5d8;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f8f5f3);
+            color: #333;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            height: 42px;
+            box-shadow: 
+                inset 2px 2px 5px rgba(0,0,0,0.03),
+                inset -2px -2px 5px rgba(255,255,255,0.8);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #800020;
+            box-shadow: 
+                0 0 0 3px rgba(128, 0, 32, 0.1),
+                inset 2px 2px 5px rgba(0,0,0,0.03),
+                inset -2px -2px 5px rgba(255,255,255,0.8);
+            transform: translateY(-2px);
+        }
+
+        .input-group input.valid {
+            border-color: #4caf50;
+            background: linear-gradient(145deg, #f8faf8, #f1f8e9);
+        }
+
+        .input-group input.invalid {
+            border-color: #c62828;
+            background: linear-gradient(145deg, #fff5f5, #ffebee);
+        }
+
+        .input-group input::placeholder {
+            color: #aaa;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .input-group input:disabled {
+            background: #f0ece8;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .format-hint {
+            margin-top: 10px;
+            font-size: 0.82em;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .format-hint.valid {
+            color: #4caf50;
+        }
+
+        .format-hint.invalid {
+            color: #c62828;
+        }
+
+        /* ===== HIDDEN SECTIONS ===== */
+        .hidden-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hidden-section.show {
+            display: block;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== 3D SECTION CARDS ===== */
+        .section-card {
+            background: linear-gradient(145deg, #ffffff, #f5f0ec);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 
+                8px 8px 20px rgba(128, 0, 32, 0.06),
+                -8px -8px 20px rgba(255, 255, 255, 0.8);
+            transform-style: preserve-3d;
+        }
+
+        .section-card:hover {
+            box-shadow: 
+                12px 12px 30px rgba(128, 0, 32, 0.1),
+                -8px -8px 20px rgba(255, 255, 255, 0.8);
+            transform: translateY(-3px) translateZ(10px);
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, #800020, #d4af37);
+            border-radius: 18px 0 0 18px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1.5px solid #f5f0ee;
+        }
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(145deg, #800020, #b00030);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1em;
+            box-shadow: 
+                3px 3px 8px rgba(128, 0, 32, 0.2),
+                -2px -2px 6px rgba(255, 255, 255, 0.3);
+            transform: translateZ(15px);
+        }
+
+        .section-title-text {
+            color: #2c1810;
+            font-size: 1.1em;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .section-subtitle {
+            color: #a09088;
+            font-size: 0.82em;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .section-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.4s ease;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .status-dot.active {
+            background: #4caf50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.4), inset 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .status-dot.pending {
+            background: #f9a825;
+            box-shadow: 0 0 8px rgba(249, 168, 37, 0.4), inset 1px 1px 2px rgba(0,0,0,0.1);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .status-text {
+            font-size: 0.78em;
+            font-weight: 600;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .status-text.active {
+            color: #4caf50;
+        }
+
+        .status-text.pending {
+            color: #f9a825;
+        }
+
+        /* ===== 3D FORM GRID ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #5a4a42;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: color 0.3s ease;
+        }
+
+        .form-group:focus-within label {
+            color: #800020;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e0d8d4;
+            border-radius: 10px;
+            font-size: 0.92em;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #faf8f6);
+            color: #333;
+            font-family: 'Inter', sans-serif;
+            height: 40px;
+            box-shadow: 
+                inset 2px 2px 4px rgba(0,0,0,0.02),
+                inset -2px -2px 4px rgba(255,255,255,0.8);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #800020;
+            background: linear-gradient(145deg, #ffffff, #ffffff);
+            box-shadow: 
+                0 0 0 3px rgba(128, 0, 32, 0.08),
+                inset 2px 2px 4px rgba(0,0,0,0.02),
+                inset -2px -2px 4px rgba(255,255,255,0.8);
+            transform: translateY(-1px);
+        }
+
+        .form-group input.filled,
+        .form-group select.filled {
+            border-color: #4caf50;
+            background: linear-gradient(145deg, #f8faf8, #f1f8e9);
+        }
+
+        .form-group input:disabled,
+        .form-group select:disabled {
+            background: linear-gradient(145deg, #f0ece8, #e8e2df);
+            color: #666;
+            cursor: not-allowed;
+            border-color: #ddd5d0;
+            opacity: 0.7;
+        }
+
+        .form-group input.input-error {
+            border-color: #c62828;
+            background: linear-gradient(145deg, #fff5f5, #ffebee);
+            animation: shake 0.3s ease;
+        }
+
+        .input-error-msg {
+            font-size: 0.75em;
+            color: #c62828;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .input-error-msg.show {
+            display: block;
+        }
+
+        /* ===== PARENTS SUB-SECTIONS ===== */
+        .parent-subsection {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        .parent-subsection label {
+            color: #800020 !important;
+            font-size: 0.95em !important;
+            font-weight: 700 !important;
+            border-bottom: 2px solid #800020;
+            display: inline-block;
+            padding-bottom: 4px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* ===== STAGGERED ANIMATIONS ===== */
+        .hidden-section.show .form-group {
+            opacity: 0;
+            transform: translateX(-25px);
+            animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hidden-section.show .form-group:nth-child(1) { animation-delay: 0.08s; }
+        .hidden-section.show .form-group:nth-child(2) { animation-delay: 0.16s; }
+        .hidden-section.show .form-group:nth-child(3) { animation-delay: 0.24s; }
+        .hidden-section.show .form-group:nth-child(4) { animation-delay: 0.32s; }
+        .hidden-section.show .form-group:nth-child(5) { animation-delay: 0.40s; }
+        .hidden-section.show .form-group:nth-child(6) { animation-delay: 0.48s; }
+        .hidden-section.show .form-group:nth-child(7) { animation-delay: 0.56s; }
+        .hidden-section.show .form-group:nth-child(8) { animation-delay: 0.64s; }
+        .hidden-section.show .form-group:nth-child(9) { animation-delay: 0.72s; }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== 3D SUBMIT SECTION ===== */
+        .submit-section {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .submit-section.show {
+            display: block;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(145deg, #800020, #a00030);
+            color: white;
+            border: none;
+            padding: 14px 50px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 
+                8px 8px 25px rgba(128, 0, 32, 0.25),
+                -4px -4px 10px rgba(255, 255, 255, 0.3),
+                inset 0 -3px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.5px;
+            transform: translateZ(0);
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-4px) translateZ(10px);
+            box-shadow: 
+                12px 12px 35px rgba(128, 0, 32, 0.35),
+                -4px -4px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+            box-shadow: 
+                4px 4px 12px rgba(128, 0, 32, 0.2),
+                inset 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ===== 3D FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 18px;
+            color: #a09088;
+            font-size: 0.82em;
+            border-top: 1px solid #f5f0ee;
+            background: linear-gradient(145deg, #fdfcfb, #f5f0ec);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .footer strong {
+            color: #800020;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .footer .year {
+            display: block;
+            font-weight: 600;
+            color: #800020;
+            margin-bottom: 4px;
+            font-size: 0.95em;
+        }
+
+        .footer .motto {
+            display: block;
+            font-style: italic;
+            color: #d4af37;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 3D LOCKED OVERLAY ===== */
+        .locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .locked-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .locked-message {
+            background: linear-gradient(145deg, #ffffff, #f5f0ec);
+            padding: 18px 28px;
+            border-radius: 14px;
+            box-shadow: 
+                6px 6px 15px rgba(0,0,0,0.1),
+                -4px -4px 10px rgba(255,255,255,0.8);
+            text-align: center;
+            color: #888;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-radius: 18px;
+            }
+
+            .header {
+                padding: 30px 20px 40px;
+            }
+
+            .school-name {
+                font-size: 1.5em;
+            }
+
+            .school-subtitle {
+                font-size: 0.75em;
+                letter-spacing: 3px;
+            }
+
+            .school-badge {
+                width: 44px;
+                height: 44px;
+                font-size: 1.3em;
+            }
+
+            .slogan {
+                font-size: 0.85em;
+            }
+
+            .form-container {
+                padding: 20px 16px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .input-group input {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .section-card {
+                padding: 20px 16px;
+            }
+
+            .section-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .section-status {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            .btn-submit {
+                padding: 14px 35px;
+                font-size: 0.95em;
+                width: 100%;
+            }
+
+            .matricule-section {
+                padding: 20px 16px;
+            }
+
+            .footer {
+                font-size: 0.75em;
+                padding: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .school-name {
+                font-size: 1.25em;
+            }
+
+            .school-subtitle {
+                font-size: 0.7em;
+                letter-spacing: 2px;
+            }
+
+            .school-badge {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1em;
+            }
+
+            .slogan {
+                font-size: 0.8em;
+            }
+
+            .section-title-text {
+                font-size: 1em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .header {
+                padding: 25px 15px 35px;
+            }
+
+            .form-container {
+                padding: 16px 12px;
+            }
+
+            .matricule-section {
+                padding: 18px 14px;
+            }
+
+            .section-card {
+                padding: 18px 14px;
+            }
+
+            .input-group input,
+            .form-group input,
+            .form-group select {
+                font-size: 16px; /* iOS zoom fix */
+                padding: 12px 14px;
+                height: 44px;
+            }
+        }
+
+        /* ===== TEXTURE OVERLAY ===== */
+        .section-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(128, 0, 32, 0.015) 1px, transparent 1px);
+            background-size: 18px 18px;
+            pointer-events: none;
+        }
+
+        /* ===== 3D FLOATING ORBS ===== */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: #800020;
+            top: 10%;
+            left: -5%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 250px;
+            height: 250px;
+            background: #d4af37;
+            top: 60%;
+            right: -5%;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: #4a0012;
+            bottom: 10%;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- NOTIFICATION (placée hors des conteneurs 3D pour un centrage écran parfait) -->
+    <div id="notification" class="notification">
+        <span id="notif-icon"></span>
+        <span id="notif-message"></span>
+    </div>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-pattern"></div>
+            <div class="header-circle-2"></div>
+            <div class="header-circle-3"></div>
+            <div class="header-content">
+                <div class="school-badge"><img src="data:image/jpeg;base64,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" alt="Logo C.P.C.A"></div>
+                <h1 class="school-name">Collège Privé Les Cartésiens</h1>
+                <p class="school-subtitle">Abidjan</p>
+                <div class="divider"></div>
+                <p class="slogan">"L'une des clés de la réussite, c'est la confiance en soi,<br>l'une des clés de la confiance en soi, c'est la préparation"</p>
+            </div>
+            <div class="header-wave">
+                <svg viewBox="0 0 1440 40" preserveAspectRatio="none">
+                    <path fill="#faf6f2" d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,25 1440,20 L1440,40 L0,40 Z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <!-- PROGRESS BAR -->
+            <div id="progress-container" class="progress-container">
+                <div class="progress-label">
+                    <span>Progression de l'inscription</span>
+                    <span id="progress-text">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- SECTION MATRICULE -->
+            <div class="matricule-section">
+                <div class="section-title">Matricule de l'Élève</div>
+                <div class="search-box">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="matricule" 
+                            placeholder="Ex: 12345678A ou A12345678" 
+                            autocomplete="off"
+                            maxlength="9"
+                        >
+                    </div>
+                </div>
+                <p class="format-hint" id="format-hint">
+                    🔒 Format requis : 8 chiffres + 1 lettre (ex: 12345678A ou A12345678)
+                </p>
+            </div>
+
+            <!-- SECTION INFORMATIONS ÉLÈVE -->
+            <div id="section-eleve" class="hidden-section">
+                <div class="section-card" style="position: relative;">
+                    <div class="locked-overlay" id="lock-eleve">
+                        <div class="locked-message">
+                            🔒 Complétez le matricule pour débloquer
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <div class="section-icon">👤</div>
+                        <div>
+                            <div class="section-title-text">Informations de l'Élève</div>
+                            <div class="section-subtitle">Données personnelles et d'identité</div>
+                        </div>
+                        <div class="section-status">
+                            <span class="status-dot" id="dot-eleve"></span>
+                            <span class="status-text" id="text-eleve">En attente</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nom">Nom de l'élève *</label>
+                            <input type="text" id="nom" placeholder="Nom de famille" oninput="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenoms">Prénoms de l'élève *</label>
+                            <input type="text" id="prenoms" placeholder="Prénom(s)" oninput="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sexe">Sexe *</label>
+                            <select id="sexe" onchange="checkSectionEleve()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date_naissance">Date de naissance *</label>
+                            <input type="date" id="date_naissance" onchange="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lieu_naissance">Lieu de naissance *</label>
+                            <input type="text" id="lieu_naissance" placeholder="Ville de naissance" oninput="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nationalite">Nationalité *</label>
+                            <select id="nationalite" onchange="checkSectionEleve()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="CI">Ivoirienne</option>
+                                <option value="BF">Burkinabè</option>
+                                <option value="ML">Malienne</option>
+                                <option value="SN">Sénégalaise</option>
+                                <option value="GN">Guinéenne</option>
+                                <option value="TG">Togolaise</option>
+                                <option value="BJ">Béninoise</option>
+                                <option value="FR">Française</option>
+                                <option value="OTHER">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION INFORMATIONS SCOLAIRES -->
+            <div id="section-scolaire" class="hidden-section">
+                <div class="section-card" style="position: relative;">
+                    <div class="locked-overlay" id="lock-scolaire">
+                        <div class="locked-message">
+                            🔒 Complétez les informations de l'élève pour débloquer
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <div class="section-icon">📚</div>
+                        <div>
+                            <div class="section-title-text">Informations Scolaires</div>
+                            <div class="section-subtitle">Détails de la scolarité actuelle</div>
+                        </div>
+                        <div class="section-status">
+                            <span class="status-dot" id="dot-scolaire"></span>
+                            <span class="status-text" id="text-scolaire">En attente</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="classe">Classe *</label>
+                            <select id="classe" onchange="handleClasseChange()">
+                                <option value="">Sélectionnez...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="statut">Statut *</label>
+                            <select id="statut" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="AFF">AFF — Affecté</option>
+                                <option value="NAFF">NAFF — Non Affecté</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="qualite">Qualité *</label>
+                            <select id="qualite" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="RED">Redoublant</option>
+                                <option value="NRED">Non Redoublant</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="lv2-container" style="display: none;">
+                            <label for="lv2">LV2 (Langue Vivante 2) <span id="lv2-required">*</span></label>
+                            <select id="lv2" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="ALLEMAND">Allemand</option>
+                                <option value="ESPAGNOL">Espagnol</option>
+                            </select>
+                            <p style="font-size: 0.8em; color: #999; margin-top: 6px;">LV2 obligatoire pour 4ème à Tle A</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="regime">Régime *</label>
+                            <select id="regime" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="BOURSSIER">Boursier</option>
+                                <option value="NON_BOURSSIER">Non Boursier</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION INFORMATIONS PARENTS -->
+            <div id="section-parents" class="hidden-section">
+                <div class="section-card" style="position: relative;">
+                    <div class="locked-overlay" id="lock-parents">
+                        <div class="locked-message">
+                            🔒 Complétez les informations scolaires pour débloquer
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <div class="section-icon">👨‍👩‍👧</div>
+                        <div>
+                            <div class="section-title-text">Informations des Parents</div>
+                            <div class="section-subtitle">Coordonnées du père et de la mère</div>
+                        </div>
+                        <div class="section-status">
+                            <span class="status-dot" id="dot-parents"></span>
+                            <span class="status-text" id="text-parents">En attente</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group parent-subsection">
+                            <label>👨 Informations du Père</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nom_pere">Nom du père *</label>
+                            <input type="text" id="nom_pere" placeholder="Nom de famille du père" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenoms_pere">Prénoms du père *</label>
+                            <input type="text" id="prenoms_pere" placeholder="Prénom(s) du père" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_pere">Contact du père *</label>
+                            <input type="tel" id="contact_pere" placeholder="Ex: 0123456789" oninput="validateContact(this); checkSectionParents()" inputmode="numeric">
+                            <span class="input-error-msg" id="error-contact-pere">Seuls les chiffres sont autorisés</span>
+                        </div>
+                        
+                        <div class="form-group parent-subsection">
+                            <label>👩 Informations de la Mère</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nom_mere">Nom de la mère *</label>
+                            <input type="text" id="nom_mere" placeholder="Nom de famille de la mère" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenoms_mere">Prénoms de la mère *</label>
+                            <input type="text" id="prenoms_mere" placeholder="Prénom(s) de la mère" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_mere">Contact de la mère *</label>
+                            <input type="tel" id="contact_mere" placeholder="Ex: 0123456789" oninput="validateContact(this); checkSectionParents()" inputmode="numeric">
+                            <span class="input-error-msg" id="error-contact-mere">Seuls les chiffres sont autorisés</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOUTON SUBMIT -->
+            <div id="submit-section" class="submit-section">
+                <button class="btn-submit" id="btn-submit" onclick="soumettreInscription()" disabled>
+                    ✓ Finaliser l'Inscription
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span class="year">ANNÉE 2026 - 2027</span>
+            <span class="motto">NO JESUS NO LIFE</span>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION API =====
+        // La page est servie par le MÊME serveur Render que l'API.
+        // → on utilise des URL relatives : pas besoin de domaine Render ni de CORS.
+        //   fetch('/api/...') tape automatiquement le bon serveur.
+        const API_URL = '';
+
+        let etapeActuelle = 0;
+        let autoNavTimeout = null;
+        let matriculeTraite = '';
+        let sectionsAffichees = false; // Flag pour savoir si les sections sont déjà affichées
+
+        // ===== CHARGEMENT DYNAMIQUE DES CLASSES =====
+        // Les classes (ex: "6ème 1", "6ème 2"...) sont créées par l'admin
+        // selon le nombre réel de classes de l'établissement (voir admin.html).
+        // On les charge ici et on remplit le menu déroulant "Classe", regroupé
+        // par niveau. classesInfo garde, pour chaque code, si la LV2 est
+        // obligatoire pour ce niveau (au lieu d'une liste de codes en dur).
+        let classesInfo = {};
+
+        async function chargerClasses() {
+            try {
+                const response = await fetch(`${API_URL}/api/classes`);
+                const classes = await response.json();
+                const select = document.getElementById('classe');
+
+                classesInfo = {};
+                const parNiveau = {};
+                classes.forEach(c => {
+                    classesInfo[c.code] = { lv2: !!c.lv2 };
+                    if (!parNiveau[c.niveau_label]) parNiveau[c.niveau_label] = [];
+                    parNiveau[c.niveau_label].push(c);
+                });
+
+                if (classes.length === 0) {
+                    select.innerHTML = '<option value="">⚠️ Aucune classe disponible — contactez l\'administration</option>';
+                    select.disabled = true;
+                    console.warn('Aucune classe disponible : l\'administration doit d\'abord les créer dans l\'espace admin.');
+                    return;
+                }
+
+                select.disabled = false;
+                let html = '<option value="">Sélectionnez...</option>';
+                Object.keys(parNiveau).forEach(niveauLabel => {
+                    html += `<optgroup label="${niveauLabel}">`;
+                    parNiveau[niveauLabel].forEach(c => {
+                        html += `<option value="${c.code}" data-lv2="${c.lv2 ? '1' : '0'}">${c.label}</option>`;
+                    });
+                    html += '</optgroup>';
+                });
+                select.innerHTML = html;
+
+            } catch (err) {
+                console.error('Erreur chargement des classes:', err);
+                const select = document.getElementById('classe');
+                select.innerHTML = '<option value="">⚠️ Erreur de connexion au serveur</option>';
+                select.disabled = true;
+            }
+        }
+
+        // Lancé dès le chargement de la page ; les fonctions qui en dépendent
+        // (remplissage du formulaire pour un élève existant) attendent cette
+        // promesse avant de toucher au champ "Classe".
+        const classesPretes = chargerClasses();
+
+        // ===== UTILITAIRES =====
+        function showNotification(type, message) {
+            const notif = document.getElementById('notification');
+            const icon = document.getElementById('notif-icon');
+            const msg = document.getElementById('notif-message');
+            
+            notif.className = `notification ${type} show`;
+            
+            if (type === 'success') icon.textContent = '✅';
+            else if (type === 'error') icon.textContent = '❌';
+            else if (type === 'info') icon.textContent = 'ℹ️';
+            
+            msg.textContent = message;
+
+            // Tap n'importe où sur le panneau pour le fermer tout de suite
+            notif.style.cursor = 'pointer';
+            notif.onclick = () => notif.classList.remove('show');
+            
+            clearTimeout(notif._hideTimer);
+            notif._hideTimer = setTimeout(() => {
+                notif.classList.remove('show');
+            }, 5000);
+        }
+
+        function updateProgress() {
+            const pourcentages = [0, 25, 50, 75, 100];
+            const fill = document.getElementById('progress-fill');
+            const text = document.getElementById('progress-text');
+            
+            fill.style.width = pourcentages[etapeActuelle] + '%';
+            text.textContent = pourcentages[etapeActuelle] + '%';
+        }
+
+        function scrollToElement(id) {
+            setTimeout(() => {
+                document.getElementById(id).scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 300);
+        }
+
+        function setSectionStatus(section, status) {
+            const dot = document.getElementById('dot-' + section);
+            const text = document.getElementById('text-' + section);
+            
+            dot.className = 'status-dot ' + status;
+            text.className = 'status-text ' + status;
+            
+            if (status === 'active') {
+                text.textContent = 'Complété';
+            } else if (status === 'pending') {
+                text.textContent = 'En cours';
+            } else {
+                text.textContent = 'En attente';
+            }
+        }
+
+        // ===== CACHER TOUTES LES SECTIONS =====
+        function cacherToutesSections() {
+            // Cacher les sections
+            const sections = ['section-eleve', 'section-scolaire', 'section-parents', 'submit-section'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.remove('show');
+            });
+            
+            // Remettre les overlays
+            ['eleve', 'scolaire', 'parents'].forEach(s => {
+                setSectionStatus(s, '');
+                document.getElementById('lock-' + s).classList.add('show');
+            });
+            
+            // Cacher progress bar
+            document.getElementById('progress-container').classList.remove('show');
+            
+            // Reset état
+            etapeActuelle = 0;
+            sectionsAffichees = false;
+            updateProgress();
+            
+            // Désactiver bouton
+            document.getElementById('btn-submit').disabled = true;
+        }
+
+        // ===== AFFICHER LES SECTIONS =====
+        function afficherToutesSections() {
+            if (sectionsAffichees) return; // Déjà affichées
+            
+            sectionsAffichees = true;
+            
+            // Afficher progress bar
+            document.getElementById('progress-container').classList.add('show');
+            
+            // Afficher section élève
+            etapeActuelle = 1;
+            updateProgress();
+            afficherSection('section-eleve', 'lock-eleve');
+            setSectionStatus('eleve', 'pending');
+            scrollToElement('section-eleve');
+        }
+
+        // ===== VALIDATION CONTACT (CHIFFRES UNIQUEMENT) =====
+        function validateContact(input) {
+            const errorMsg = document.getElementById('error-' + input.id.replace('_', '-'));
+            const value = input.value;
+            
+            const cleanValue = value.replace(/\D/g, '');
+            
+            if (value !== cleanValue) {
+                input.value = cleanValue;
+                input.classList.add('input-error');
+                if (errorMsg) errorMsg.classList.add('show');
+                
+                setTimeout(() => {
+                    input.classList.remove('input-error');
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }, 1500);
+            } else {
+                input.classList.remove('input-error');
+                if (errorMsg) errorMsg.classList.remove('show');
+            }
+            
+            return cleanValue.length > 0;
+        }
+
+        // ===== VALIDATION MATRICULE =====
+        function validerMatricule(value) {
+            const regex = /^(\d{8}[A-Za-z]|[A-Za-z]\d{8})$/;
+            return regex.test(value);
+        }
+
+        function normaliserMatricule(value) {
+            return value.toUpperCase().trim();
+        }
+
+        // ===== GESTION INPUT MATRICULE =====
+        document.getElementById('matricule').addEventListener('input', function(e) {
+            const rawValue = e.target.value;
+            const value = normaliserMatricule(rawValue);
+            
+            // Mettre à jour la valeur affichée (uppercase)
+            if (e.target.value !== value) {
+                e.target.value = value;
+            }
+            
+            const hint = document.getElementById('format-hint');
+            
+            // SI VIDE → cacher tout
+            if (value.length === 0) {
+                e.target.className = '';
+                hint.className = 'format-hint';
+                hint.innerHTML = '🔒 Format requis : 8 chiffres + 1 lettre (ex: 12345678A ou A12345678)';
+                cacherToutesSections();
+                matriculeTraite = '';
+                return;
+            }
+            
+            // SI INVALIDE (pas 9 caractères ou mauvais format) → cacher tout
+            if (!validerMatricule(value)) {
+                e.target.className = 'invalid';
+                hint.className = 'format-hint invalid';
+                hint.innerHTML = '❌ Format invalide. Ex: 12345678A ou A12345678 (8 chiffres + 1 lettre)';
+                
+                // Cacher les sections si elles étaient affichées
+                if (sectionsAffichees) {
+                    cacherToutesSections();
+                }
+                matriculeTraite = '';
+                return;
+            }
+            
+            // SI VALIDE → afficher les sections
+            e.target.className = 'valid';
+            hint.className = 'format-hint valid';
+            hint.innerHTML = '✅ Format valide ! Chargement automatique...';
+            
+            // Ne traiter que si c'est un nouveau matricule
+            if (matriculeTraite !== value) {
+                clearTimeout(autoNavTimeout);
+                autoNavTimeout = setTimeout(() => {
+                    rechercherEleve(value);
+                }, 600);
+            }
+        });
+
+        // ===== GESTION CLASSE & LV2 CONDITIONNEL =====
+        // La LV2 est requise selon le NIVEAU de la classe choisie (ex: "6ème 2"
+        // appartient au niveau 6ème, sans LV2), et non plus selon un code de
+        // classe fixe — puisque les classes sont désormais créées par l'admin
+        // avec des codes du type "6EME_2". Le flag vient de data-lv2, posé sur
+        // chaque <option> par chargerClasses() à partir de /api/classes.
+        function handleClasseChange() {
+            const classeSelect = document.getElementById('classe');
+            const classe = classeSelect.value;
+            const lv2Container = document.getElementById('lv2-container');
+            const lv2Select = document.getElementById('lv2');
+            const lv2Required = document.getElementById('lv2-required');
+
+            const optionChoisie = classeSelect.selectedOptions[0];
+            const lv2Requis = !!classe && optionChoisie && optionChoisie.dataset.lv2 === '1';
+
+            if (!classe) {
+                lv2Container.style.display = 'none';
+                lv2Select.value = '';
+                lv2Required.textContent = '*';
+            } else if (lv2Requis) {
+                lv2Container.style.display = 'block';
+                if (lv2Select.value === 'N/A') lv2Select.value = '';
+                lv2Required.textContent = '*';
+            } else {
+                lv2Container.style.display = 'none';
+                lv2Select.value = 'N/A';
+                lv2Required.textContent = '';
+            }
+
+            setTimeout(() => {
+                checkSectionScolaire();
+            }, 50);
+        }
+
+        // ===== RECHERCHE ÉLÈVE (depuis la base de données Render) =====
+        async function rechercherEleve(matricule) {
+            matricule = normaliserMatricule(matricule || document.getElementById('matricule').value);
+            
+            if (!validerMatricule(matricule)) {
+                showNotification('error', 'Le matricule doit contenir 8 chiffres et 1 lettre !');
+                return;
+            }
+            
+            matriculeTraite = matricule;
+
+            const hint = document.getElementById('format-hint');
+            hint.innerHTML = '⏳ Recherche dans la base de données...';
+
+            // On s'assure que le menu "Classe" est déjà rempli avant de
+            // tenter d'y sélectionner la classe de l'élève trouvé.
+            await classesPretes;
+
+            try {
+                const response = await fetch(`${API_URL}/api/eleves/verifier/${matricule}`);
+                const data = await response.json();
+
+                hint.innerHTML = '✅ Format valide !';
+
+                // Cas 1 : élève bloqué par l'administration
+                if (data.existe && data.bloque) {
+                    showNotification('error', data.message || 'Inscription bloquée. Contactez l\'administration.');
+                    cacherToutesSections();
+                    return;
+                }
+
+                // Cas 2 : élève trouvé → pré-remplissage du formulaire
+                if (data.existe && data.eleve) {
+                    showNotification('success', `Élève trouvé — Matricule: ${matricule} — Vous pouvez modifier les données`);
+                    remplirChamps(data.eleve);
+                } else {
+                    // Cas 3 : nouvel élève → formulaire vide
+                    showNotification('info', 'Nouvelle inscription — Veuillez compléter le formulaire');
+                    viderChamps();
+                }
+
+                // Afficher les sections (si pas déjà fait)
+                afficherToutesSections();
+
+            } catch (err) {
+                console.error('Erreur rechercherEleve:', err);
+                hint.innerHTML = '❌ Erreur de connexion';
+                showNotification('error', 'Impossible de joindre le serveur. Vérifiez votre connexion internet et réessayez.');
+            }
+        }
+
+        function remplirChamps(eleve) {
+            const champs = [
+                'nom', 'prenoms', 'sexe', 'date_naissance', 'lieu_naissance', 'nationalite',
+                'classe', 'statut', 'qualite', 'lv2', 'regime',
+                'nom_pere', 'prenoms_pere', 'contact_pere',
+                'nom_mere', 'prenoms_mere', 'contact_mere'
+            ];
+
+            champs.forEach(champ => {
+                const element = document.getElementById(champ);
+                if (element) {
+                    let valeur = eleve[champ] || '';
+                    // PostgreSQL renvoie la date en ISO (2010-05-15T00:00:00.000Z)
+                    // → on garde uniquement YYYY-MM-DD pour le champ <input type="date">
+                    if (champ === 'date_naissance' && valeur) {
+                        valeur = String(valeur).substring(0, 10);
+                    }
+                    // Si la classe enregistrée n'existe plus dans la liste actuelle
+                    // (ex: classe supprimée depuis côté admin, ou ancienne donnée
+                    // antérieure à la gestion dynamique des classes), on l'ajoute
+                    // temporairement au menu pour ne pas perdre l'information.
+                    if (champ === 'classe' && valeur && element.tagName === 'SELECT' &&
+                        !Array.from(element.options).some(o => o.value === valeur)) {
+                        const opt = document.createElement('option');
+                        opt.value = valeur;
+                        opt.textContent = '⚠️ ' + valeur + ' (classe à réaffecter)';
+                        opt.dataset.lv2 = '0';
+                        element.appendChild(opt);
+                    }
+                    element.value = valeur;
+                    element.disabled = false;
+                    if (valeur) element.classList.add('filled');
+                    else element.classList.remove('filled');
+                }
+            });
+
+            handleClasseChange();
+
+            // Révélation PROGRESSIVE des sections (élève → scolaire → parents → bouton),
+            // au même rythme qu'une saisie manuelle, au lieu de tout afficher d'un coup.
+            // Chaque vérification est décalée pour laisser le temps à la section
+            // précédente de s'afficher avant de révéler la suivante.
+            setTimeout(() => {
+                checkSectionEleve();
+            }, 100);
+
+            setTimeout(() => {
+                checkSectionScolaire();
+            }, 1000);
+
+            setTimeout(() => {
+                checkSectionParents();
+            }, 1900);
+        }
+
+        function viderChamps() {
+            const champs = [
+                'nom', 'prenoms', 'sexe', 'date_naissance', 'lieu_naissance', 'nationalite',
+                'classe', 'statut', 'qualite', 'lv2', 'regime',
+                'nom_pere', 'prenoms_pere', 'contact_pere',
+                'nom_mere', 'prenoms_mere', 'contact_mere'
+            ];
+
+            champs.forEach(champ => {
+                const element = document.getElementById(champ);
+                if (element) {
+                    element.value = '';
+                    element.disabled = false;
+                    element.classList.remove('filled');
+                }
+            });
+
+            handleClasseChange();
+
+            setTimeout(() => {
+                checkSectionEleve();
+                checkSectionScolaire();
+                checkSectionParents();
+            }, 100);
+        }
+
+        // ===== AFFICHAGE SECTION =====
+        function afficherSection(sectionId, lockId) {
+            const section = document.getElementById(sectionId);
+            section.classList.add('show');
+            
+            if (lockId) {
+                document.getElementById(lockId).classList.remove('show');
+            }
+        }
+
+        // ===== VÉRIFICATIONS SECTIONS AVEC NAVIGATION AUTO =====
+        function checkSectionEleve() {
+            const champs = ['nom', 'prenoms', 'sexe', 'date_naissance', 'lieu_naissance', 'nationalite'];
+            let tousRemplis = true;
+            
+            champs.forEach(champ => {
+                const el = document.getElementById(champ);
+                if (el.value.trim()) {
+                    el.classList.add('filled');
+                } else {
+                    el.classList.remove('filled');
+                    tousRemplis = false;
+                }
+            });
+            
+            if (tousRemplis) {
+                setSectionStatus('eleve', 'active');
+                clearTimeout(autoNavTimeout);
+                autoNavTimeout = setTimeout(() => {
+                    afficherSectionScolaire();
+                }, 800);
+            } else {
+                setSectionStatus('eleve', 'pending');
+            }
+        }
+
+        function afficherSectionScolaire() {
+            if (etapeActuelle >= 2) return;
+            etapeActuelle = 2;
+            updateProgress();
+            afficherSection('section-scolaire', 'lock-scolaire');
+            setSectionStatus('scolaire', 'pending');
+            scrollToElement('section-scolaire');
+        }
+
+        function checkSectionScolaire() {
+            const classe = document.getElementById('classe').value;
+            const lv2Requis = !!classe && classesInfo[classe] && classesInfo[classe].lv2;
+            const lv2NotRequired = !lv2Requis;
+
+            const champs = ['classe', 'statut', 'qualite', 'regime'];
+            let tousRemplis = true;
+
+            champs.forEach(champ => {
+                const el = document.getElementById(champ);
+                if (el.value.trim()) {
+                    el.classList.add('filled');
+                } else {
+                    el.classList.remove('filled');
+                    tousRemplis = false;
+                }
+            });
+
+            if (!lv2NotRequired) {
+                const lv2El = document.getElementById('lv2');
+                if (lv2El.value.trim() && lv2El.value !== 'N/A') {
+                    lv2El.classList.add('filled');
+                } else {
+                    lv2El.classList.remove('filled');
+                    tousRemplis = false;
+                }
+            } else {
+                const lv2El = document.getElementById('lv2');
+                lv2El.classList.add('filled');
+            }
+
+            if (tousRemplis) {
+                setSectionStatus('scolaire', 'active');
+                clearTimeout(autoNavTimeout);
+                autoNavTimeout = setTimeout(() => {
+                    afficherSectionParents();
+                }, 800);
+            } else {
+                setSectionStatus('scolaire', 'pending');
+            }
+        }
+
+        function afficherSectionParents() {
+            if (etapeActuelle >= 3) return;
+            etapeActuelle = 3;
+            updateProgress();
+            afficherSection('section-parents', 'lock-parents');
+            setSectionStatus('parents', 'pending');
+            scrollToElement('section-parents');
+        }
+
+        function checkSectionParents() {
+            const champs = ['nom_pere', 'prenoms_pere', 'contact_pere', 'nom_mere', 'prenoms_mere', 'contact_mere'];
+            let tousRemplis = true;
+            
+            champs.forEach(champ => {
+                const el = document.getElementById(champ);
+                const val = el.value.trim();
+                
+                if (champ.includes('contact')) {
+                    const cleanVal = val.replace(/\D/g, '');
+                    if (cleanVal.length > 0) {
+                        el.classList.add('filled');
+                        if (val !== cleanVal) {
+                            el.value = cleanVal;
+                        }
+                    } else {
+                        el.classList.remove('filled');
+                        tousRemplis = false;
+                    }
+                } else {
+                    if (val) {
+                        el.classList.add('filled');
+                    } else {
+                        el.classList.remove('filled');
+                        tousRemplis = false;
+                    }
+                }
+            });
+            
+            if (tousRemplis) {
+                setSectionStatus('parents', 'active');
+                etapeActuelle = 4;
+                updateProgress();
+                document.getElementById('submit-section').classList.add('show');
+                document.getElementById('btn-submit').disabled = false;
+                scrollToElement('submit-section');
+            } else {
+                setSectionStatus('parents', 'pending');
+                document.getElementById('btn-submit').disabled = true;
+            }
+        }
+
+        // ===== RÉINITIALISATION COMPLÈTE =====
+        function reinitialiserFormulaire() {
+            // 1. Cacher toutes les sections
+            cacherToutesSections();
+            
+            // 2. Vider tous les champs
+            viderChamps();
+            
+            // 3. Reset matricule
+            const matriculeInput = document.getElementById('matricule');
+            matriculeInput.value = '';
+            matriculeInput.className = '';
+            matriculeInput.disabled = false;
+            
+            // 4. Reset hint
+            const hint = document.getElementById('format-hint');
+            hint.className = 'format-hint';
+            hint.innerHTML = '🔒 Format requis : 8 chiffres + 1 lettre (ex: 12345678A ou A12345678)';
+            
+            // 5. Reset notification
+            document.getElementById('notification').classList.remove('show');
+            
+            // 6. Reset bouton submit
+            const btn = document.getElementById('btn-submit');
+            btn.innerHTML = '✓ Finaliser l\'Inscription';
+            btn.style.background = '';
+            btn.disabled = true;
+            
+            // 7. Reset matricule traité
+            matriculeTraite = '';
+            
+            // 8. Scroll vers le haut
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // 9. Focus sur matricule
+            setTimeout(() => {
+                matriculeInput.focus();
+            }, 500);
+        }
+
+        // ===== SOUMISSION (enregistrement réel dans la base Render) =====
+        async function soumettreInscription() {
+            const btn = document.getElementById('btn-submit');
+            btn.innerHTML = '⏳ Traitement en cours...';
+            btn.disabled = true;
+
+            // Récupérer toutes les données du formulaire
+            const data = {
+                matricule: document.getElementById('matricule').value,
+                nom: document.getElementById('nom').value,
+                prenoms: document.getElementById('prenoms').value,
+                sexe: document.getElementById('sexe').value,
+                date_naissance: document.getElementById('date_naissance').value,
+                lieu_naissance: document.getElementById('lieu_naissance').value,
+                nationalite: document.getElementById('nationalite').value,
+                classe: document.getElementById('classe').value,
+                statut: document.getElementById('statut').value,
+                qualite: document.getElementById('qualite').value,
+                lv2: document.getElementById('lv2').value || 'N/A',
+                regime: document.getElementById('regime').value,
+                nom_pere: document.getElementById('nom_pere').value,
+                prenoms_pere: document.getElementById('prenoms_pere').value,
+                contact_pere: document.getElementById('contact_pere').value,
+                nom_mere: document.getElementById('nom_mere').value,
+                prenoms_mere: document.getElementById('prenoms_mere').value,
+                contact_mere: document.getElementById('contact_mere').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/eleves/inscrire`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                // Lire la réponse en texte d'abord (au cas où ce n'est pas du JSON)
+                const texte = await response.text();
+                let result;
+                try { result = JSON.parse(texte); }
+                catch { result = { error: texte.substring(0, 150) }; }
+
+                // Si le serveur renvoie une erreur → on affiche le code HTTP exact
+                if (!response.ok) {
+                    throw new Error('Erreur ' + response.status + ' : ' + (result.error || 'réponse inattendue'));
+                }
+
+                // ✅ Succès : réellement enregistré dans la base
+                showNotification('success', 'Inscription finalisée et enregistrée dans la base avec succès !');
+                btn.innerHTML = '✓ Inscription Finalisée';
+                btn.style.background = '#2e7d32';
+
+                // Réinitialisation AUTO après 2 secondes
+                setTimeout(() => {
+                    reinitialiserFormulaire();
+                }, 2000);
+
+            } catch (err) {
+                console.error('Erreur soumettreInscription:', err);
+                showNotification('error', err.message || 'Erreur de connexion au serveur. Réessayez.');
+                // Réactiver le bouton pour permettre une nouvelle tentative
+                btn.innerHTML = '✓ Finaliser l\'Inscription';
+                btn.style.background = '';
+                btn.disabled = false;
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        window.addEventListener('load', () => {
+            document.getElementById('matricule').focus();
+        });
+    </script>
+
+</body>
+</html>
