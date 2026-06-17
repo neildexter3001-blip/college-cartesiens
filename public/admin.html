@@ -766,6 +766,54 @@
         .import-preview th, .import-preview td { text-align: left; padding: 5px 8px; border-bottom: 1px solid #f0e8e4; }
         .import-preview th { color: #a09088; font-weight: 600; text-transform: uppercase; font-size: 0.78em; }
         .btn-loading { opacity: 0.7; cursor: wait !important; }
+        .niveau-block {
+            background: linear-gradient(145deg, #ffffff, #f5f0ec);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            box-shadow: 4px 4px 12px rgba(128, 0, 32, 0.04), -4px -4px 12px rgba(255, 255, 255, 0.8);
+        }
+        .niveau-input {
+            width: 64px;
+            padding: 7px 8px;
+            border: 1.5px solid #e0d5d8;
+            border-radius: 8px;
+            font-size: 0.85em;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #ffffff, #f8f5f3);
+        }
+        .niveau-input:focus { outline: none; border-color: #800020; }
+        .classe-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(145deg, #fdf6f8, #ffffff);
+            border: 1px solid rgba(128, 0, 32, 0.15);
+            color: #800020;
+            font-size: 0.78em;
+            font-weight: 600;
+            padding: 5px 6px 5px 12px;
+            border-radius: 20px;
+        }
+        .classe-chip button {
+            border: none;
+            background: rgba(198, 40, 40, 0.12);
+            color: #c62828;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9em;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .classe-chip button:hover { background: rgba(198, 40, 40, 0.25); transform: scale(1.1); }
+        .classe-empty-hint { font-size: 0.78em; color: #c0a8a0; font-style: italic; }
     </style>
     <base target="_blank">
 </head>
@@ -834,6 +882,7 @@
             <div class="toolbar-group">
                 <button class="btn btn-success" onclick="importData()">📥 Importer</button>
                 <button class="btn btn-info" id="btn-export" onclick="exportData()">📤 Exporter</button>
+                <button class="btn" style="background: linear-gradient(145deg, #4a0012, #800020); color: white; box-shadow: 6px 6px 15px rgba(74, 0, 18, 0.2), -3px -3px 8px rgba(255, 255, 255, 0.3);" onclick="openClassesModal()">🏫 Classes</button>
                 <button class="btn btn-danger" onclick="deleteSelected()" id="btn-delete-selected" disabled>🗑️ Supprimer</button>
             </div>
             <div class="toolbar-group search-group">
@@ -842,17 +891,6 @@
                     <div class="filter-row">
                         <select class="filter-select" id="filter-classe" onchange="handleFilter()">
                             <option value="">Classe</option>
-                            <option value="6EME">6ème</option>
-                            <option value="5EME">5ème</option>
-                            <option value="4EME">4ème</option>
-                            <option value="3EME">3ème</option>
-                            <option value="2NDE">2nde</option>
-                            <option value="1ERE_A">1ère A</option>
-                            <option value="1ERE_C">1ère C</option>
-                            <option value="1ERE_D">1ère D</option>
-                            <option value="TLE_A">Tle A</option>
-                            <option value="TLE_C">Tle C</option>
-                            <option value="TLE_D">Tle D</option>
                         </select>
                         <select class="filter-select" id="filter-statut" onchange="handleFilter()">
                             <option value="">Statuts</option>
@@ -932,6 +970,24 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="modal-classes">
+    <div class="modal" style="max-width: 640px;">
+        <div class="modal-header">
+            <div class="modal-title">🏫 Gérer les Classes</div>
+            <button class="modal-close" onclick="closeModal('modal-classes')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size: 0.85em; color: #a09088; margin-bottom: 16px; line-height: 1.5;">
+                Indique, pour chaque niveau, le nombre réel de classes de ton établissement (ex: 6 classes de 6ème). Les classes générées (6ème 1, 6ème 2...) apparaîtront automatiquement dans le menu "Classe" de la page d'inscription des parents.
+            </p>
+            <div id="classes-niveaux-list"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" style="background: linear-gradient(145deg, #e0d8d4, #f5f0ec); color: #5a4a42; box-shadow: 4px 4px 10px rgba(0,0,0,0.08);" onclick="closeModal('modal-classes')">❌ Fermer</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal-overlay" id="modal-import">
     <div class="modal" style="max-width: 540px;">
         <div class="modal-header">
@@ -943,6 +999,7 @@
                 <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(145deg, #e3f2fd, #bbdefb); color: #1565c0; font-size: 2em; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 4px 4px 12px rgba(21, 101, 192, 0.15);">📁</div>
                 <div style="font-family: 'Playfair Display', serif; font-size: 1.1em; font-weight: 700; color: #2c1810; margin-bottom: 8px;">Importer un fichier CSV</div>
                 <div style="font-size: 0.82em; color: #a09088; margin-bottom: 6px;">Format : matricule;nom;prenoms;sexe;date_naissance;lieu_naissance;nationalite;classe;statut;qualite;lv2;regime;nom_pere;prenoms_pere;contact_pere;nom_mere;prenoms_mere;contact_mere</div>
+                <div style="font-size: 0.78em; color: #a09088; margin-bottom: 6px;">💡 La colonne <strong>classe</strong> doit reprendre le code exact d'une classe créée via le bouton « 🏫 Classes » (ex: <code>6EME_1</code>).</div>
                 <div style="margin-bottom: 18px;">
                     <a href="#" onclick="downloadTemplate(); return false;" style="font-size: 0.82em; color: #1565c0; font-weight: 600; text-decoration: none;">📄 Télécharger un modèle vide</a>
                 </div>
@@ -981,23 +1038,139 @@ let itemsPerPage = 8;
 let filteredData = [];
 let selectedRows = new Set();
 let deletingMatricule = null;
-let sortColumn = null;
+let sortColumn = 'nom'; // Tri alphabétique par défaut (Nom, puis Prénoms)
 let sortDirection = 'asc';
 let importDataBuffer = null;
 let importParsedEleves = [];
 let currentViewMatricule = null;
 
-const CLASSE_LABELS = {
-    "6EME": "6ème", "5EME": "5ème", "4EME": "4ème", "3EME": "3ème",
-    "2NDE": "2nde", "1ERE_A": "1ère A", "1ERE_C": "1ère C", "1ERE_D": "1ère D",
-    "TLE_A": "Tle A", "TLE_C": "Tle C", "TLE_D": "Tle D"
-};
+// CLASSE_LABELS est désormais alimenté dynamiquement depuis l'API /api/classes
+// (cf. section "GESTION DES CLASSES" plus bas) au lieu d'une liste fixe en dur,
+// puisque l'admin peut créer autant de classes qu'il veut par niveau.
+let CLASSE_LABELS = {};
 const NATIONALITE_LABELS = {
     "CI": "Ivoirienne", "BF": "Burkinabè", "ML": "Malienne", "SN": "Sénégalaise",
     "GN": "Guinéenne", "TG": "Togolaise", "BJ": "Béninoise", "FR": "Française", "OTHER": "Autre"
 };
 const SEXE_LABELS = { "M": "Masculin", "F": "Féminin" };
 const STATUT_LABELS = { "AFF": "AFF", "NAFF": "NAFF" };
+
+// ===== GESTION DES CLASSES (niveaux configurables par l'admin) =====
+// L'admin choisit, pour chaque niveau (6ème, 5ème...), le nombre réel de
+// classes physiques de l'établissement. Le serveur génère les codes
+// NIVEAU_1, NIVEAU_2... qui alimentent ensuite le menu "Classe" de la page
+// d'inscription. CLASSE_LABELS (déclaré plus haut) est reconstruit à chaque
+// chargement à partir de ces classes.
+let niveauxList = [];
+let allClasses = [];
+
+async function loadNiveaux() {
+    try {
+        const resp = await fetch(API_URL + '/niveaux');
+        niveauxList = await resp.json();
+    } catch (err) {
+        console.warn('Chargement des niveaux échoué :', err.message);
+    }
+}
+
+async function loadClasses() {
+    try {
+        const resp = await fetch(API_URL + '/classes');
+        allClasses = await resp.json();
+        CLASSE_LABELS = {};
+        allClasses.forEach(c => { CLASSE_LABELS[c.code] = c.label; });
+        populateFilterClasseOptions();
+    } catch (err) {
+        console.warn('Chargement des classes échoué :', err.message);
+    }
+}
+
+// Reconstruit le menu déroulant de filtre "Classe" à partir des classes
+// réellement créées (au lieu d'une liste de niveaux fixes en dur)
+function populateFilterClasseOptions() {
+    const select = document.getElementById('filter-classe');
+    const valeurCourante = select.value;
+    select.innerHTML = '<option value="">Classe</option>' +
+        allClasses.map(c => '<option value="' + c.code + '">' + c.label + '</option>').join('');
+    if (allClasses.some(c => c.code === valeurCourante)) select.value = valeurCourante;
+}
+
+function openClassesModal() {
+    renderClassesModal();
+    openModal('modal-classes');
+}
+
+// Construit, pour chaque niveau, un bloc avec le nombre de classes actuel
+// et la liste des classes déjà créées (avec bouton de suppression)
+function renderClassesModal() {
+    const container = document.getElementById('classes-niveaux-list');
+    container.innerHTML = niveauxList.map(niv => {
+        const classesNiveau = allClasses.filter(c => c.niveau === niv.code).sort((a, b) => a.numero - b.numero);
+        const chips = classesNiveau.length > 0
+            ? classesNiveau.map(c =>
+                '<span class="classe-chip">' + c.label +
+                '<button onclick="supprimerClasse(\'' + c.code + '\')" title="Supprimer cette classe">×</button></span>'
+              ).join('')
+            : '<span class="classe-empty-hint">Aucune classe créée pour ce niveau pour l\'instant</span>';
+
+        return `
+            <div class="niveau-block">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+                    <strong style="font-family:'Playfair Display',serif;color:#800020;">${niv.label}</strong>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <input type="number" min="0" max="50" class="niveau-input" id="nb-${niv.code}" value="${classesNiveau.length}" title="Nombre de classes pour ce niveau">
+                        <button class="btn btn-info" style="padding:7px 14px;font-size:0.78em;" onclick="genererClasses('${niv.code}')">Mettre à jour</button>
+                    </div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">${chips}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function genererClasses(niveauCode) {
+    const input = document.getElementById('nb-' + niveauCode);
+    const nombre = parseInt(input.value, 10);
+    if (isNaN(nombre) || nombre < 0 || nombre > 50) {
+        showNotification('error', 'Merci d\'indiquer un nombre de classes entre 0 et 50');
+        return;
+    }
+    try {
+        const resp = await fetch(API_URL + '/classes/generer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': adminToken },
+            body: JSON.stringify({ niveau: niveauCode, nombre })
+        });
+        if (resp.status === 401) { logout(); return; }
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Mise à jour refusée par le serveur');
+        showNotification('success', data.message);
+        await loadClasses();
+        renderClassesModal();
+        renderTable();
+    } catch (err) {
+        showNotification('error', err.message);
+    }
+}
+
+async function supprimerClasse(code) {
+    if (!confirm('Supprimer la classe "' + (CLASSE_LABELS[code] || code) + '" ?\nCela n\'est possible que si aucun élève n\'y est affecté.')) return;
+    try {
+        const resp = await fetch(API_URL + '/classes/' + encodeURIComponent(code), {
+            method: 'DELETE',
+            headers: { 'Authorization': adminToken }
+        });
+        if (resp.status === 401) { logout(); return; }
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Suppression refusée par le serveur');
+        showNotification('success', 'Classe supprimée');
+        await loadClasses();
+        renderClassesModal();
+        renderTable();
+    } catch (err) {
+        showNotification('error', err.message);
+    }
+}
 
 // Filtre sur l'état d'inscription (déclenché par les cartes stats)
 let inscriptionFilter = ''; // '' | 'inscrit' | 'attente'
@@ -1054,6 +1227,8 @@ async function loadInscriptions() {
         if (!response.ok) throw new Error('Erreur serveur');
         inscriptions = await response.json();
         filteredData = [...inscriptions];
+        appliquerTriCourant();
+        marquerColonneTriee(sortColumn);
         updateDashboard();
         renderTable();
     } catch (err) {
@@ -1213,6 +1388,13 @@ function filterByStatut(type) {
 }
 
 // ===== SORT =====
+// Marque visuellement la colonne triée (flèche dorée) dans l'en-tête du tableau
+function marquerColonneTriee(column) {
+    document.querySelectorAll('.data-table th').forEach(th => th.classList.remove('sorted'));
+    const span = document.getElementById('sort-' + column);
+    if (span) span.parentElement.classList.add('sorted');
+}
+
 function sortTable(column) {
     if (sortColumn === column) {
         sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
@@ -1221,18 +1403,8 @@ function sortTable(column) {
         sortDirection = 'asc';
     }
 
-    document.querySelectorAll('.data-table th').forEach(th => th.classList.remove('sorted'));
-    const th = document.getElementById('sort-' + column);
-    if (th) th.parentElement.classList.add('sorted');
-
-    filteredData.sort((a, b) => {
-        let valA = (a[column] || '').toString().toLowerCase();
-        let valB = (b[column] || '').toString().toLowerCase();
-        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-        return 0;
-    });
-
+    marquerColonneTriee(column);
+    appliquerTriCourant();
     renderTable();
 }
 
@@ -1543,7 +1715,7 @@ function detecterSeparateur(headerLine) {
 // erreurs de saisie/ordre de colonnes lors de l'import.
 function downloadTemplate() {
     const headers = 'matricule;nom;prenoms;sexe;date_naissance;lieu_naissance;nationalite;classe;statut;qualite;lv2;regime;nom_pere;prenoms_pere;contact_pere;nom_mere;prenoms_mere;contact_mere';
-    const exemple = 'CART2026001;KOUASSI;Jean Aimé;M;2012-05-20;Abidjan;CI;6EME;AFF;NRED;N/A;NON_BOURSSIER;KOUASSI;Paul;0102030405;TANO;Marie;0607080910';
+    const exemple = 'CART2026001;KOUASSI;Jean Aimé;M;2012-05-20;Abidjan;CI;6EME_1;AFF;NRED;N/A;NON_BOURSSIER;KOUASSI;Paul;0102030405;TANO;Marie;0607080910';
     const csv = '\uFEFF' + headers + '\n' + exemple + '\n';
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
@@ -1707,6 +1879,12 @@ function appliquerTriCourant() {
     filteredData.sort((a, b) => {
         let valA = (a[sortColumn] || '').toString().toLowerCase();
         let valB = (b[sortColumn] || '').toString().toLowerCase();
+        // Tri par Nom : on départage les homonymes par Prénoms, pour un
+        // ordre alphabétique stable et prévisible.
+        if (sortColumn === 'nom' && valA === valB) {
+            valA = (a.prenoms || '').toString().toLowerCase();
+            valB = (b.prenoms || '').toString().toLowerCase();
+        }
         if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
         if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
         return 0;
@@ -1775,8 +1953,9 @@ async function refreshSilencieux() {
 }
 
 // ===== INIT =====
-window.addEventListener('load', () => {
-    loadInscriptions();
+window.addEventListener('load', async () => {
+    await Promise.all([loadNiveaux(), loadClasses()]);
+    await loadInscriptions();
 
     // 🔄 Rafraîchissement automatique toutes les 5 secondes (silencieux)
     setInterval(refreshSilencieux, 5000);
