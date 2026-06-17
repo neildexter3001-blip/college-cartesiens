@@ -1221,17 +1221,6 @@
                             <label for="classe">Classe *</label>
                             <select id="classe" onchange="handleClasseChange()">
                                 <option value="">Sélectionnez...</option>
-                                <option value="6EME">6ème</option>
-                                <option value="5EME">5ème</option>
-                                <option value="4EME">4ème</option>
-                                <option value="3EME">3ème</option>
-                                <option value="2NDE">2nde</option>
-                                <option value="1ERE_A">1ère A</option>
-                                <option value="1ERE_C">1ère C</option>
-                                <option value="1ERE_D">1ère D</option>
-                                <option value="TLE_A">Tle A</option>
-                                <option value="TLE_C">Tle C</option>
-                                <option value="TLE_D">Tle D</option>
                             </select>
                         </div>
                         
@@ -1364,6 +1353,51 @@
         let autoNavTimeout = null;
         let matriculeTraite = '';
         let sectionsAffichees = false; // Flag pour savoir si les sections sont déjà affichées
+
+        // ===== CHARGEMENT DYNAMIQUE DES CLASSES =====
+        // Les classes (ex: "6ème 1", "6ème 2"...) sont créées par l'admin
+        // selon le nombre réel de classes de l'établissement (voir admin.html).
+        // On les charge ici et on remplit le menu déroulant "Classe", regroupé
+        // par niveau. classesInfo garde, pour chaque code, si la LV2 est
+        // obligatoire pour ce niveau (au lieu d'une liste de codes en dur).
+        let classesInfo = {};
+
+        async function chargerClasses() {
+            try {
+                const response = await fetch(`${API_URL}/api/classes`);
+                const classes = await response.json();
+                const select = document.getElementById('classe');
+
+                classesInfo = {};
+                const parNiveau = {};
+                classes.forEach(c => {
+                    classesInfo[c.code] = { lv2: !!c.lv2 };
+                    if (!parNiveau[c.niveau_label]) parNiveau[c.niveau_label] = [];
+                    parNiveau[c.niveau_label].push(c);
+                });
+
+                let html = '<option value="">Sélectionnez...</option>';
+                Object.keys(parNiveau).forEach(niveauLabel => {
+                    html += `<optgroup label="${niveauLabel}">`;
+                    parNiveau[niveauLabel].forEach(c => {
+                        html += `<option value="${c.code}" data-lv2="${c.lv2 ? '1' : '0'}">${c.label}</option>`;
+                    });
+                    html += '</optgroup>';
+                });
+                select.innerHTML = html;
+
+                if (classes.length === 0) {
+                    console.warn('Aucune classe disponible : l\'administration doit d\'abord les créer dans l\'espace admin.');
+                }
+            } catch (err) {
+                console.error('Erreur chargement des classes:', err);
+            }
+        }
+
+        // Lancé dès le chargement de la page ; les fonctions qui en dépendent
+        // (remplissage du formulaire pour un élève existant) attendent cette
+        // promesse avant de toucher au champ "Classe".
+        const classesPretes = chargerClasses();
 
         // ===== UTILITAIRES =====
         function showNotification(type, message) {
@@ -1551,27 +1585,33 @@
         });
 
         // ===== GESTION CLASSE & LV2 CONDITIONNEL =====
+        // La LV2 est requise selon le NIVEAU de la classe choisie (ex: "6ème 2"
+        // appartient au niveau 6ème, sans LV2), et non plus selon un code de
+        // classe fixe — puisque les classes sont désormais créées par l'admin
+        // avec des codes du type "6EME_2". Le flag vient de data-lv2, posé sur
+        // chaque <option> par chargerClasses() à partir de /api/classes.
         function handleClasseChange() {
-            const classe = document.getElementById('classe').value;
+            const classeSelect = document.getElementById('classe');
+            const classe = classeSelect.value;
             const lv2Container = document.getElementById('lv2-container');
             const lv2Select = document.getElementById('lv2');
             const lv2Required = document.getElementById('lv2-required');
 
-            const classesSansLV2 = ['6EME', '5EME', '1ERE_C', '1ERE_D', 'TLE_C', 'TLE_D'];
-            const classesAvecLV2 = ['4EME', '3EME', '2NDE', '1ERE_A', 'TLE_A'];
+            const optionChoisie = classeSelect.selectedOptions[0];
+            const lv2Requis = !!classe && optionChoisie && optionChoisie.dataset.lv2 === '1';
 
-            if (classesSansLV2.includes(classe)) {
+            if (!classe) {
                 lv2Container.style.display = 'none';
-                lv2Select.value = 'N/A';
-                lv2Required.textContent = '';
-            } else if (classesAvecLV2.includes(classe)) {
+                lv2Select.value = '';
+                lv2Required.textContent = '*';
+            } else if (lv2Requis) {
                 lv2Container.style.display = 'block';
                 if (lv2Select.value === 'N/A') lv2Select.value = '';
                 lv2Required.textContent = '*';
             } else {
                 lv2Container.style.display = 'none';
-                lv2Select.value = '';
-                lv2Required.textContent = '*';
+                lv2Select.value = 'N/A';
+                lv2Required.textContent = '';
             }
 
             setTimeout(() => {
@@ -1592,6 +1632,10 @@
 
             const hint = document.getElementById('format-hint');
             hint.innerHTML = '⏳ Recherche dans la base de données...';
+
+            // On s'assure que le menu "Classe" est déjà rempli avant de
+            // tenter d'y sélectionner la classe de l'élève trouvé.
+            await classesPretes;
 
             try {
                 const response = await fetch(`${API_URL}/api/eleves/verifier/${matricule}`);
@@ -1642,6 +1686,18 @@
                     // → on garde uniquement YYYY-MM-DD pour le champ <input type="date">
                     if (champ === 'date_naissance' && valeur) {
                         valeur = String(valeur).substring(0, 10);
+                    }
+                    // Si la classe enregistrée n'existe plus dans la liste actuelle
+                    // (ex: classe supprimée depuis côté admin, ou ancienne donnée
+                    // antérieure à la gestion dynamique des classes), on l'ajoute
+                    // temporairement au menu pour ne pas perdre l'information.
+                    if (champ === 'classe' && valeur && element.tagName === 'SELECT' &&
+                        !Array.from(element.options).some(o => o.value === valeur)) {
+                        const opt = document.createElement('option');
+                        opt.value = valeur;
+                        opt.textContent = '⚠️ ' + valeur + ' (classe à réaffecter)';
+                        opt.dataset.lv2 = '0';
+                        element.appendChild(opt);
                     }
                     element.value = valeur;
                     element.disabled = false;
@@ -1732,8 +1788,8 @@
 
         function checkSectionScolaire() {
             const classe = document.getElementById('classe').value;
-            const classesSansLV2 = ['6EME', '5EME', '1ERE_C', '1ERE_D', 'TLE_C', 'TLE_D'];
-            const lv2NotRequired = classesSansLV2.includes(classe);
+            const lv2Requis = !!classe && classesInfo[classe] && classesInfo[classe].lv2;
+            const lv2NotRequired = !lv2Requis;
 
             const champs = ['classe', 'statut', 'qualite', 'regime'];
             let tousRemplis = true;
