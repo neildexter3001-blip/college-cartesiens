@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Collège Privé Les Cartésiens — Connexion</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { min-height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, Helvetica, sans-serif;
+            font-size: 14px; color: #2c1810; background: #f0ebe5; overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        .layout { display: flex; width: 100%; min-height: 100vh; min-height: 100dvh; max-height: 100vh; max-height: 100dvh; }
+        @media (max-width: 900px) {
+            .layout { max-height: none; }
+        }
+
+        /* ===== CANVAS PARTICULES ===== */
+        #particles-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; opacity: 0.55;
+        }
+
+        /* ===== VITRINE GAUCHE ===== */
+        .hero {
+            position: relative; flex: 1.1;
+            background: #800020;
+            animation: slideFromLeft 0.9s cubic-bezier(0.16,1,0.3,1) both;
+            color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            text-align: center; padding: 90px 44px 48px; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, transparent, #d4af37, #f0d878, #d4af37, transparent);
+            background-size: 200% 100%; animation: shimmerLine 3s linear infinite; z-index: 6;
+        }
+
+        /* Séparation droite nette */
+        .wave-divider { display: none !important; }
+
+        .blob { position: absolute; border-radius: 50%; filter: blur(45px); opacity: 0.3; z-index: 0; }
+        .blob-1 { width: 320px; height: 320px; background: #d4af37; top: -60px; left: -80px; animation: float1 14s ease-in-out infinite; }
+        .blob-2 { width: 260px; height: 260px; background: #ff3b6b; bottom: -70px; right: -60px; animation: float2 16s ease-in-out infinite; }
+        .blob-3 { width: 180px; height: 180px; background: #c0392b; top: 40%; left: 30%; animation: float3 18s ease-in-out infinite; }
+
+        .ring { position: absolute; border: 1px solid rgba(212,175,55,0.15); border-radius: 50%; z-index: 0; transform-origin: center; }
+        .ring-1 { width: 440px; height: 440px; top: 50%; left: 50%; animation: spinRing1 45s linear infinite; }
+        .ring-2 { width: 600px; height: 600px; top: 50%; left: 50%; animation: spinRing2 70s linear infinite; }
+
+        .float-ico { position: absolute; font-size: 30px; opacity: 0.13; z-index: 0; user-select: none; }
+        .float-ico.i1 { top: 14%; left: 16%; animation: drift 12s ease-in-out infinite; }
+        .float-ico.i2 { top: 24%; right: 14%; animation: drift 15s ease-in-out infinite reverse; }
+        .float-ico.i3 { bottom: 22%; left: 12%; animation: drift 17s ease-in-out infinite; }
+        .float-ico.i4 { bottom: 16%; right: 18%; animation: drift 13s ease-in-out infinite reverse; }
+        .float-ico.i5 { top: 50%; left: 8%; animation: drift 19s ease-in-out infinite; }
+
+        .hero-content { position: relative; z-index: 2; max-width: 430px; }
+        .hero-badge {
+            width: 78px; height: 78px; border-radius: 50%; background: #fff; margin: 0 auto 16px;
+            padding: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.35); position: relative;
+            animation: popIn 0.9s cubic-bezier(0.16,1,0.3,1) 0.25s both, floatY 4s ease-in-out 1.2s infinite;
+        }
+        .hero-badge::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(212,175,55,0.5); animation: pulseRing 2.6s ease-out infinite; }
+        .hero-badge img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; display: block; }
+
+        .hero-name {
+            font-size: 2.5em; font-weight: 700; letter-spacing: 1px; line-height: 1.15; margin-bottom: 8px;
+            background: linear-gradient(to right, #ffffff, #f0d878, #ffffff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            animation: fadeUp 0.9s ease 0.4s both;
+        }
+        .hero-sub { font-size: 1.05em; letter-spacing: 5px; text-transform: uppercase; color: #d4af37; margin-bottom: 22px; animation: fadeUp 0.9s ease 0.5s both; }
+        .hero-divider { width: 70px; height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 0 auto 22px; animation: fadeUp 0.9s ease 0.55s both; }
+
+        /* Slogan effet typewriter */
+        .hero-slogan {
+            font-size: 1.12em; font-style: italic; line-height: 1.8;
+            color: rgba(255,255,255,0.9); margin-bottom: 26px;
+            animation: fadeUp 0.9s ease 0.6s both; min-height: 3.6em;
+        }
+        .typewriter-cursor { display: inline-block; color: #d4af37; animation: blink 0.8s step-end infinite; font-style: normal; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .hero-features { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.9s ease 0.7s both; }
+        .feature {
+            display: flex; align-items: center; gap: 7px; font-size: 0.92em;
+            color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(212,175,55,0.25); padding: 7px 13px; border-radius: 50px;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .feature:hover { background: rgba(212,175,55,0.15); transform: translateY(-2px); }
+        .feature svg { width: 15px; height: 15px; stroke: #d4af37; }
+        .hero-motto { position: absolute; bottom: 24px; left: 0; right: 0; text-align: center; font-size: 0.92em; letter-spacing: 2px; color: #d4af37; font-style: italic; z-index: 2; animation: fadeUp 0.9s ease 0.85s both; }
+
+        /* Compteur horloge */
+        .hero-clock {
+            position: absolute; top: 18px; right: 20px; z-index: 5;
+            font-size: 0.78em; color: rgba(212,175,55,0.7); letter-spacing: 1px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ===== FORMULAIRE DROITE ===== */
+        .form-side {
+            flex: 1; background: linear-gradient(145deg, #faf6f2, #f0ebe5);
+            display: flex; align-items: center; justify-content: center;
+            padding: 40px; position: relative; z-index: 1; overflow-y: auto;
+            animation: slideFromRight 0.9s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .form-wrap { width: 100%; max-width: 380px; position: relative; }
+
+        .panel { text-align: center; animation: panelIn 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+        .panel.slide-out-left { animation: panelOutLeft 0.3s ease forwards; }
+        .panel.slide-in-right { animation: panelInRight 0.45s cubic-bezier(0.16,1,0.3,1) both; }
+
+        .panel-icon {
+            width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 16px;
+            background: linear-gradient(145deg, #800020, #a00030); color: #fff;
+            display: flex; align-items: center; justify-content: center; position: relative;
+            box-shadow: 0 12px 30px rgba(128,0,32,0.3);
+            animation: floatY 3.2s ease-in-out infinite, popIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .panel-icon::after { content: ''; position: absolute; inset: -6px; border-radius: 24px; border: 2px solid rgba(128,0,32,0.35); animation: pulseRing 2.4s ease-out infinite; }
+        .panel-icon svg { width: 32px; height: 32px; }
+
+        .panel-title { font-size: 1.9em; font-weight: 700; color: #2c1810; display: inline-block; position: relative; }
+        .panel-title::after {
+            content: ''; position: absolute; left: 50%; bottom: -8px; width: 0; height: 3px; border-radius: 3px;
+            background: linear-gradient(90deg, #800020, #d4af37);
+            transform: translateX(-50%); animation: underlineGrow 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;
+        }
+        .panel-subtitle { font-size: 1em; color: #a09088; margin: 18px 0 30px; }
+
+        /* ===== CHAMPS ===== */
+        .field { margin-bottom: 28px; text-align: left; animation: fieldUp 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+        .field:nth-of-type(1) { animation-delay: 0.12s; }
+        .field:nth-of-type(2) { animation-delay: 0.22s; }
+        .field:nth-of-type(3) { animation-delay: 0.32s; }
+
+        .field label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.92em; font-weight: 400; letter-spacing: 0px;
+            text-transform: none; color: #1a1a1a; margin-bottom: 9px;
+        }
+        .field-valid-icon { font-size: 0.9em; opacity: 0; transition: opacity 0.3s; }
+        .field-valid-icon.show { opacity: 1; }
+
+        .input-wrap {
+            position: relative;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(128,0,32,0.06);
+            transition: box-shadow 0.3s, transform 0.2s;
+        }
+        .input-wrap:focus-within {
+            box-shadow: 0 4px 24px rgba(128,0,32,0.14);
+            transform: translateY(-1px);
+        }
+        .input-wrap.is-valid { box-shadow: 0 4px 20px rgba(27,122,62,0.12); }
+        .input-wrap.is-error { box-shadow: 0 4px 20px rgba(192,40,58,0.2); border: 1.5px solid rgba(192,40,58,0.35); }
+
+        .input-icon {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            color: #9a7d84; display: flex; pointer-events: none; z-index: 2;
+            transition: color 0.25s ease, transform 0.25s ease;
+        }
+        .input-icon svg { width: 20px; height: 20px; }
+        .field input {
+            width: 100%; padding: 14px 16px 14px 48px; border: none; border-radius: 14px;
+            font-size: 1.05em; font-family: 'Segoe UI', system-ui, -apple-system, Arial, Helvetica, sans-serif;
+            color: #333; height: 52px; text-align: left;
+            background: transparent; transition: all 0.3s ease;
+        }
+        .field input.has-eye { padding-right: 48px; }
+        .field input:focus { outline: none; }
+        .input-wrap:focus-within .input-icon { color: #800020; transform: translateY(-50%) scale(1.18); }
+
+        /* trait d'accent animé */
+        .input-wrap::before {
+            content: ''; position: absolute; left: 8px; right: 8px; bottom: 0; height: 3px;
+            background: rgba(128,0,32,0.10); border-radius: 99px;
+        }
+        .input-wrap::after {
+            content: ''; position: absolute; left: 50%; bottom: 0; width: 0; height: 3px;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #800020, #d4af37, #800020);
+            transform: translateX(-50%);
+            transition: width 0.4s cubic-bezier(0.16,1,0.3,1); z-index: 1;
+        }
+        .input-wrap:focus-within::after { width: calc(100% - 16px); }
+
+        .toggle-eye {
+            position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; padding: 4px; z-index: 3;
+            font-size: 1.35em; line-height: 1; opacity: 0.8;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .toggle-eye:hover { opacity: 1; transform: translateY(-50%) scale(1.12); }
+
+        /* ===== BARRE DE FORCE MDP ===== */
+        .pw-strength {
+            margin-top: 8px; opacity: 0; transition: opacity 0.4s;
+        }
+        .pw-strength.show { opacity: 1; }
+        .pw-strength-bar {
+            height: 5px; border-radius: 5px; background: #e8e0da; overflow: hidden; margin-bottom: 5px;
+        }
+        .pw-strength-fill {
+            height: 100%; border-radius: 5px; width: 0%;
+            transition: width 0.4s cubic-bezier(0.16,1,0.3,1), background 0.4s;
+        }
+        .pw-strength-label { font-size: 0.78em; font-weight: 600; letter-spacing: 0.3px; }
+        /* Niveaux couleurs */
+        .str-weak  .pw-strength-fill { width: 25%; background: #e74c3c; }
+        .str-fair  .pw-strength-fill { width: 50%; background: #e67e22; }
+        .str-good  .pw-strength-fill { width: 75%; background: #2ecc71; }
+        .str-strong .pw-strength-fill { width: 100%; background: #27ae60; }
+        .str-weak  .pw-strength-label { color: #c0283a; }
+        .str-fair  .pw-strength-label { color: #e67e22; }
+        .str-good  .pw-strength-label { color: #27ae60; }
+        .str-strong .pw-strength-label { color: #1b7a3e; }
+
+        /* ===== BOUTON ===== */
+        .btn-main {
+            width: 100%; padding: 16px; margin-top: 42px; border: none; border-radius: 50px;
+            background: linear-gradient(135deg, #800020, #a00030, #800020); background-size: 200% 100%;
+            color: #fff; font-size: 1.15em; font-weight: 700;
+            font-family: 'Segoe UI', system-ui, -apple-system, Arial, Helvetica, sans-serif;
+            cursor: pointer; letter-spacing: 0.5px; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            box-shadow: 8px 8px 25px rgba(128,0,32,0.28), -4px -4px 10px rgba(255,255,255,0.4);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            animation: fieldUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.4s both, btnShift 5s ease infinite;
+        }
+        .btn-main::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-main:hover::before { left: 100%; }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 12px 12px 38px rgba(128,0,32,0.4); }
+        .btn-main:hover .btn-arrow { transform: translateX(5px); }
+        .btn-main:active { transform: translateY(-1px); }
+        .btn-main:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-arrow { display: flex; transition: transform 0.3s ease; }
+        .btn-arrow svg { width: 20px; height: 20px; }
+        .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+        /* ===== BOITE INFO ===== */
+        .info-box {
+            display: flex; gap: 11px; align-items: flex-start; text-align: left;
+            background: linear-gradient(145deg, #fff8e1, #ffecb3); border: 1px solid #ffe082;
+            border-radius: 13px; padding: 13px 16px; margin-bottom: 24px;
+            font-size: 0.95em; color: #5d4037; line-height: 1.6;
+        }
+        .info-box svg { width: 20px; height: 20px; stroke: #c77f12; flex-shrink: 0; margin-top: 1px; }
+        .pw-rules { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 0.85em; color: #a09088; margin: -12px 0 22px; line-height: 1.5; }
+        .pw-rules svg { width: 14px; height: 14px; stroke: #a09088; flex-shrink: 0; }
+
+        /* ===== TOAST ===== */
+        .notification {
+            display: none; position: fixed; top: 24px; left: 50%; z-index: 9999;
+            min-width: 260px; max-width: 90%; padding: 15px 22px 15px 18px; border-radius: 16px;
+            font-weight: 600; font-size: 1.05em; line-height: 1.45; align-items: center; gap: 12px;
+            backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 18px 50px rgba(0,0,0,0.22), 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(-50%) translateY(-160%); cursor: pointer;
+        }
+        .notification::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 5px; border-radius: 5px; background: currentColor; opacity: 0.85; }
+        .notification span { position: relative; z-index: 1; }
+        .notif-icon { font-size: 1.25em; line-height: 1; }
+        .notification.show { display: flex; animation: toastSlideIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .notification.show.hide { animation: toastSlideOut 0.4s cubic-bezier(0.4,0,1,1) forwards; }
+        .notification.success { background: linear-gradient(145deg, #eafaf0, #d6f3e0); color: #1b7a3e; }
+        .notification.error { background: linear-gradient(145deg, #ffeef0, #ffd9de); color: #c0283a; }
+        .notification.info { background: linear-gradient(145deg, #fff6e0, #ffeab8); color: #c77f12; }
+
+        .hidden { display: none !important; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes heroGradient { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes slideFromLeft { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideFromRight { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fieldUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes pulseRing { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.3); } }
+        @keyframes underlineGrow { from { width: 0; } to { width: 70px; } }
+        @keyframes btnShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes panelIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes panelOutLeft { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-40px); } }
+        @keyframes panelInRight { from { opacity: 0; transform: translateX(45px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes shimmerLine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+        @keyframes spinRing1 { from { transform: translate(-50%,-50%) rotate(0); } to { transform: translate(-50%,-50%) rotate(360deg); } }
+        @keyframes spinRing2 { from { transform: translate(-50%,-50%) rotate(360deg); } to { transform: translate(-50%,-50%) rotate(0); } }
+        @keyframes float1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,-30px) scale(1.12); } }
+        @keyframes float2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-26px,24px) scale(0.9); } }
+        @keyframes float3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-20px,20px); } }
+        @keyframes drift { 0%,100% { transform: translate(0,0) rotate(0); } 50% { transform: translate(14px,-18px) rotate(12deg); } }
+        @keyframes toastSlideIn { 0% { opacity: 0; transform: translateX(-50%) translateY(-160%); } 60% { opacity: 1; transform: translateX(-50%) translateY(10%); } 100% { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        @keyframes toastSlideOut { from { opacity: 1; transform: translateX(-50%) translateY(0); } to { opacity: 0; transform: translateX(-50%) translateY(-160%); } }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 15% { transform: translateX(-8px); } 30% { transform: translateX(8px); } 45% { transform: translateX(-6px); } 60% { transform: translateX(6px); } 75% { transform: translateX(-3px); } 90% { transform: translateX(3px); } }
+        @keyframes waveAnim { 0%,100% { d: path("M0,0 C20,30 40,-10 60,0 C80,10 100,-20 120,0 L120,100 L0,100 Z"); } 50% { d: path("M0,0 C20,-20 40,30 60,0 C80,-30 100,20 120,0 L120,100 L0,100 Z"); } }
+
+        /* ===== RESPONSIVE ===== */
+        /* ===== RESPONSIVE ===== */
+
+        /* --- TABLETTE (<=900px) --- */
+        @media (max-width: 900px) {
+            html, body { overflow: auto; }
+            .layout { flex-direction: column; max-height: none; }
+            .hero { flex: none; min-height: 30vh; padding: 28px 24px 20px; }
+            .wave-divider { display: none; }
+            .hero-badge { width: 72px; height: 72px; margin-bottom: 12px; }
+            .hero-name { font-size: 1.75em; }
+            .hero-sub { font-size: 0.82em; letter-spacing: 3px; margin-bottom: 12px; }
+            .hero-divider { margin-bottom: 12px; }
+            .hero-slogan { font-size: 0.95em; line-height: 1.6; margin-bottom: 14px; min-height: 3em; }
+            .hero-features { gap: 8px; }
+            .feature { font-size: 0.8em; padding: 5px 10px; }
+            .hero-motto { display: none; }
+            .hero-clock { top: 12px; right: 14px; font-size: 0.72em; }
+            .ring-1, .ring-2 { display: none; }
+            .float-ico { font-size: 20px; opacity: 0.09; }
+            /* Form : padding symetrique, tout centré */
+            .form-side { flex: 1; display: block; padding: 20px 24px 48px; }
+            .form-wrap { width: 100%; max-width: 440px; margin: 16px auto 0; }
+            .panel { text-align: center; }
+            .panel-icon { width: 70px; height: 70px; margin-top: 2px; }
+            .panel-icon svg { width: 32px; height: 32px; }
+            .panel-title { font-family: 'Segoe UI', system-ui, -apple-system, Arial, Helvetica, sans-serif; font-size: 1.875em; font-weight: 700; letter-spacing: 1px; margin-top: 6px; }
+            .panel-subtitle { margin: 18px 0 44px; font-size: 0.97em; }
+            .field { margin-bottom: 24px; text-align: left; }
+            .field label { font-size: 13.44px; }
+            .field input { height: 52px; width: 100%; }
+            .field:has(#wrap-password) { margin-top: 31.87px; }
+            .btn-main { width: 100%; margin-top: 88px; padding: 15px; font-size: 1.05em; }
+        }
+
+        /* --- MOBILE (<=560px) --- */
+        @media (max-width: 560px) {
+            .hero { min-height: 24vh; padding: 22px 18px 16px; }
+            .hero-badge { width: 62px; height: 62px; margin-bottom: 10px; }
+            .hero-name { font-size: 1.45em; }
+            .hero-sub { font-size: 0.78em; letter-spacing: 2px; margin-bottom: 10px; }
+            .hero-slogan { font-size: 0.88em; line-height: 1.5; margin-bottom: 12px; }
+            .hero-features { display: none; }
+            .hero-clock { display: none; }
+            .blob-3 { display: none; }
+            /* Form : padding symetrique, tout centré */
+            .form-side { display: block; padding: 16px 20px 40px; }
+            .form-wrap { width: 100%; max-width: 360px; margin: 14px auto 0; }
+            .panel-icon { width: 60px; height: 60px; border-radius: 16px; margin-bottom: 10px; margin-top: 2px; }
+            .panel-icon svg { width: 27px; height: 27px; }
+            .panel-title { font-family: 'Segoe UI', system-ui, -apple-system, Arial, Helvetica, sans-serif; font-size: 1.575em; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
+            .panel-subtitle { font-size: 0.9em; margin: 14px 0 38px; }
+            .field { margin-bottom: 20px; text-align: left; }
+            .field label { font-size: 13.44px; }
+            .field input { font-size: 15px; height: 52px; width: 100%; }
+            .field:has(#wrap-password) { margin-top: 29.87px; }
+            .btn-main { width: 100%; font-size: 1em; padding: 14px; margin-top: 84px; }
+            .notification { font-size: 0.95em; min-width: 220px; }
+            .info-box { font-size: 0.88em; padding: 11px 13px; }
+        }
+
+        /* --- PETIT MOBILE (<=380px) --- */
+        @media (max-width: 380px) {
+            .hero { min-height: 20vh; padding: 16px 14px 12px; }
+            .hero-badge { width: 52px; height: 52px; }
+            .hero-name { font-size: 1.25em; }
+            .hero-sub { display: none; }
+            .hero-divider { display: none; }
+            /* Form : padding symetrique, tout centré */
+            .form-side { display: block; padding: 14px 18px 36px; }
+            .form-wrap { width: 100%; max-width: 260px; margin: 12px auto 0; }
+            .panel-icon { margin-top: 0; }
+            .panel-title { font-size: 1.25em; margin-top: -4px; }
+            .panel-subtitle { margin: 12px 0 22px; }
+            .field { margin-bottom: 18px; text-align: left; }
+            .field label { font-size: 12px; }
+            .field input { height: 52px; width: 100%; }
+            .btn-main { width: 100%; padding: 13px; margin-top: 30px; }
+        }
+        @media (max-height: 480px) and (min-width: 901px) and (orientation: landscape) {
+            html, body { overflow: auto; }
+            .layout { min-height: 100vh; height: auto; max-height: none; align-items: stretch; }
+            .hero, .form-side { overflow-y: visible; max-height: none; }
+            .hero-motto { display: none; }
+        }
+        @media (max-height: 500px) and (max-width: 900px) {
+            .hero { min-height: 18vh; padding: 14px 20px; }
+            .hero-slogan { display: none; }
+            .hero-badge { width: 50px; height: 50px; margin-bottom: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particules canvas global -->
+    <canvas id="particles-canvas"></canvas>
+
+    <div id="notification" class="notification" onclick="dismissNotif()">
+        <span class="notif-icon" id="notif-icon"></span>
+        <span id="notif-text"></span>
+    </div>
+
+    <div class="layout">
+        <!-- VITRINE -->
+        <div class="hero">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <span class="float-ico i1">🎓</span>
+            <span class="float-ico i2">📚</span>
+            <span class="float-ico i3">✏️</span>
+            <span class="float-ico i4">🏆</span>
+            <span class="float-ico i5">📐</span>
+
+            <!-- Horloge -->
+            <div class="hero-clock" id="hero-clock">00:00:00</div>
+
+            <!-- Vague latérale -->
+            <div class="wave-divider">
+                <svg viewBox="0 0 60 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="wave-path" fill="#f0ebe5" d="M60,0 C40,100 20,200 40,400 C20,600 40,700 60,800 L60,800 L60,0 Z"/>
+                </svg>
+            </div>
+
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <img src="data:image/jpeg;base64,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" alt="Logo C.P.C.A">
+                </div>
+                <div class="hero-name">Collège Privé<br>Les Cartésiens</div>
+                <div class="hero-sub">Abidjan</div>
+                <div class="hero-divider"></div>
+                <div class="hero-slogan" id="hero-slogan"><span id="typewriter-text"></span><span class="typewriter-cursor">|</span></div>
+                <div class="hero-features">
+                    <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Sécurisé</div>
+                    <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13H12l-1 9 8.5-11H12z"/></svg> Rapide</div>
+                    <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg> Simple</div>
+                </div>
+            </div>
+            <div class="hero-motto">NO JESUS NO LIFE — Année 2026-2027</div>
+        </div>
+
+        <!-- FORMULAIRE -->
+        <div class="form-side">
+            <div class="form-wrap">
+
+                <!-- CONNEXION -->
+                <div id="panel-login" class="panel">
+                    <div class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+                    <div class="panel-title" translate="no">Connexion</div>
+                    <div class="panel-subtitle">Entrez vos identifiants pour accéder à votre espace</div>
+
+                    <div class="field">
+                        <label for="login-username">
+                            Identifiant
+                            <span class="field-valid-icon" id="icon-username">✅</span>
+                        </label>
+                        <div class="input-wrap" id="wrap-username">
+                            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+                            <input type="text" id="login-username" placeholder="Votre identifiant" autocomplete="username" autocapitalize="none">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="login-password">
+                            Mot de passe
+                            <span class="field-valid-icon" id="icon-password">✅</span>
+                        </label>
+                        <div class="input-wrap" id="wrap-password">
+                            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                            <input type="password" id="login-password" class="has-eye" placeholder="Votre mot de passe" autocomplete="current-password">
+                            <button type="button" class="toggle-eye" onclick="toggleEye('login-password', this)" aria-label="Afficher le mot de passe">👁️</button>
+                        </div>
+                    </div>
+
+                    <button class="btn-main" id="btn-login" onclick="doLogin()">
+                        <span class="btn-label">Se connecter</span>
+                        <span class="btn-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                    </button>
+                </div>
+
+                <!-- CHANGEMENT DE MDP -->
+                <div id="panel-change" class="panel hidden">
+                    <div class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="4"/><path d="M11 11l9 9M17 17l2-2M20 20l2-2"/></svg></div>
+                    <div class="panel-title">Nouveau mot de passe</div>
+                    <div class="panel-subtitle" id="change-hello">Première connexion</div>
+
+                    <div class="info-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span>Pour votre sécurité, choisissez un nouveau mot de passe avant d'accéder à votre espace.</span></div>
+
+                    <div class="field">
+                        <label for="new-password">Nouveau mot de passe</label>
+                        <div class="input-wrap">
+                            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                            <input type="password" id="new-password" class="has-eye" placeholder="Choisissez un mot de passe" autocomplete="new-password" oninput="updateStrength(this.value)">
+                            <button type="button" class="toggle-eye" onclick="toggleEye('new-password', this)" aria-label="Afficher le mot de passe">👁️</button>
+                        </div>
+                        <!-- Barre de force -->
+                        <div class="pw-strength" id="pw-strength">
+                            <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
+                            <span class="pw-strength-label" id="pw-label">Trop court</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="confirm-password">Confirmer le mot de passe</label>
+                        <div class="input-wrap">
+                            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                            <input type="password" id="confirm-password" placeholder="Retapez le même mot de passe" autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="pw-rules"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> Au moins 4 caractères, et différent de « 0000 ».</div>
+                    <button class="btn-main" id="btn-change" onclick="doChangePassword()">
+                        <span class="btn-label">Valider et continuer</span>
+                        <span class="btn-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== ÉTAT GLOBAL =====
+    let pendingToken = null, pendingRole = null, pendingUser = null;
+    const ARROW = '<span class="btn-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>';
+
+    // ===== PARTICULES =====
+    (function initParticles() {
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const COLORS = ['rgba(212,175,55,', 'rgba(128,0,32,', 'rgba(255,255,255,'];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function createParticle() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 2.5 + 0.5,
+                dx: (Math.random() - 0.5) * 0.4,
+                dy: (Math.random() - 0.5) * 0.4,
+                alpha: Math.random() * 0.4 + 0.1,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)]
+            };
+        }
+
+        for (let i = 0; i < 80; i++) particles.push(createParticle());
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.color + p.alpha + ')';
+                ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+
+    // ===== HORLOGE =====
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2,'0');
+        const m = String(now.getMinutes()).padStart(2,'0');
+        const s = String(now.getSeconds()).padStart(2,'0');
+        const el = document.getElementById('hero-clock');
+        if (el) el.textContent = h + ':' + m + ':' + s;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // ===== TYPEWRITER SLOGAN =====
+    (function typewriter() {
+        const slogan = "L'une des clés de la réussite, c'est la confiance en soi, l'une des clés de la confiance en soi, c'est la préparation";
+        const el = document.getElementById('typewriter-text');
+        if (!el) return;
+        let i = 0, dir = 1;
+        function tick() {
+            if (dir === 1) {
+                el.textContent = '"' + slogan.slice(0, i) + (i < slogan.length ? '' : '"');
+                i++;
+                if (i > slogan.length) { dir = -1; setTimeout(tick, 4000); return; }
+                setTimeout(tick, 75);
+            } else {
+                el.textContent = '"' + slogan.slice(0, i) + '"';
+                i--;
+                if (i < 0) { dir = 1; i = 0; setTimeout(tick, 900); return; }
+                setTimeout(tick, 30);
+            }
+        }
+        setTimeout(tick, 1200);
+    })();
+
+    // ===== VAGUE ANIMÉE =====
+
+
+    // ===== VALIDATION EN TEMPS RÉEL =====
+    document.getElementById('login-username').addEventListener('input', function() {
+        const wrap = document.getElementById('wrap-username');
+        const icon = document.getElementById('icon-username');
+        const ok = this.value.trim().length >= 2;
+        wrap.classList.toggle('is-valid', ok);
+        icon.classList.toggle('show', ok);
+    });
+    document.getElementById('login-password').addEventListener('input', function() {
+        const wrap = document.getElementById('wrap-password');
+        const icon = document.getElementById('icon-password');
+        const ok = this.value.length >= 4;
+        wrap.classList.toggle('is-valid', ok);
+        icon.classList.toggle('show', ok);
+    });
+
+    // ===== BARRE DE FORCE DU MDP =====
+    function updateStrength(val) {
+        const el = document.getElementById('pw-strength');
+        const label = document.getElementById('pw-label');
+        el.classList.toggle('show', val.length > 0);
+        el.className = 'pw-strength show';
+
+        if (val.length === 0) { el.classList.remove('show'); return; }
+
+        let score = 0;
+        if (val.length >= 4) score++;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+        if (/[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) score++;
+
+        const levels = ['str-weak','str-fair','str-good','str-strong'];
+        const labels = ['Faible 😬','Passable 🙂','Bien 😊','Très fort 💪'];
+        el.classList.add(levels[score] || 'str-weak');
+        label.textContent = labels[score] || 'Faible 😬';
+    }
+
+    // ===== TOAST =====
+    function notify(type, message) {
+        const n = document.getElementById('notification');
+        document.getElementById('notif-icon').textContent = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
+        document.getElementById('notif-text').textContent = message;
+        clearTimeout(n._hideTimer); clearTimeout(n._removeTimer);
+        n.className = 'notification ' + type + ' show';
+        n._hideTimer = setTimeout(dismissNotif, 4000);
+    }
+    function dismissNotif() {
+        const n = document.getElementById('notification');
+        if (!n.classList.contains('show')) return;
+        n.classList.add('hide');
+        n._removeTimer = setTimeout(() => n.classList.remove('show','hide','success','error','info'), 400);
+    }
+
+    // ===== HELPERS =====
+    function setLoading(btn, label, loading) {
+        if (loading) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span><span class="btn-label">' + label + '</span>'; }
+        else { btn.disabled = false; btn.innerHTML = '<span class="btn-label">' + label + '</span>' + ARROW; }
+    }
+    function toggleEye(id, btn) {
+        const input = document.getElementById(id);
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.textContent = show ? '🙈' : '👁️';
+    }
+    function finishLogin(token, role, user) {
+        localStorage.setItem('adminToken', token);
+        localStorage.setItem('adminRole', role || 'user');
+        localStorage.setItem('adminUser', user || '');
+        window.location.href = '/admin';
+    }
+    function showChangePanel() {
+        const a = document.getElementById('panel-login');
+        const b = document.getElementById('panel-change');
+        a.classList.add('slide-out-left');
+        setTimeout(() => {
+            a.classList.add('hidden'); a.classList.remove('slide-out-left');
+            b.classList.remove('hidden'); b.classList.add('slide-in-right');
+            setTimeout(() => document.getElementById('new-password').focus(), 200);
+        }, 300);
+    }
+
+    // ===== SHAKE =====
+    function shakeField(el) {
+        el.classList.remove('is-error');
+        void el.offsetWidth; // force reflow pour relancer l'animation
+        el.classList.add('is-error');
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = 'shake 0.5s ease';
+        setTimeout(() => {
+            el.classList.remove('is-error');
+            el.style.animation = '';
+        }, 600);
+    }
+    async function doLogin() {
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+        const wrapU = document.getElementById('wrap-username');
+        const wrapP = document.getElementById('wrap-password');
+        if (!username) shakeField(wrapU);
+        if (!password) shakeField(wrapP);
+        if (!username || !password) { notify('error', 'Identifiant et mot de passe requis'); return; }
+        const btn = document.getElementById('btn-login');
+        setLoading(btn, 'Connexion…', true);
+        try {
+            const resp = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.error || 'Identifiants incorrects');
+            if (data.mustChangePassword) {
+                pendingToken = data.token; pendingRole = data.role; pendingUser = data.nom_complet || data.username;
+                document.getElementById('change-hello').textContent = 'Bonjour ' + (pendingUser || '') + ', bienvenue !';
+                showChangePanel();
+            } else {
+                finishLogin(data.token, data.role, data.nom_complet || data.username);
+            }
+        } catch (err) {
+            notify('error', err.message);
+            setLoading(btn, 'Se connecter', false);
+            shakeField(document.getElementById('wrap-username'));
+            shakeField(document.getElementById('wrap-password'));
+        }
+    }
+    async function doChangePassword() {
+        const np = document.getElementById('new-password').value;
+        const cp = document.getElementById('confirm-password').value;
+        if (np.length < 4) { notify('error', 'Le mot de passe doit faire au moins 4 caractères'); return; }
+        if (np === '0000') { notify('error', 'Choisissez un mot de passe différent de 0000'); return; }
+        if (np !== cp) { notify('error', 'Les deux mots de passe ne correspondent pas'); return; }
+        const btn = document.getElementById('btn-change');
+        setLoading(btn, 'Enregistrement…', true);
+        try {
+            const resp = await fetch('/api/change-password', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': pendingToken }, body: JSON.stringify({ newPassword: np }) });
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.error || 'Erreur lors du changement');
+            notify('success', '✅ Mot de passe enregistré ! Connexion…');
+            setTimeout(() => finishLogin(pendingToken, pendingRole, pendingUser), 900);
+        } catch (err) { notify('error', err.message); setLoading(btn, 'Valider et continuer', false); }
+    }
+
+    // ===== LISTENERS CLAVIER =====
+    document.getElementById('login-username').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    document.getElementById('confirm-password').addEventListener('keydown', e => { if (e.key === 'Enter') doChangePassword(); });
+    window.addEventListener('load', () => document.getElementById('login-username').focus());
+    </script>
+</body>
+</html>
