@@ -387,7 +387,8 @@
         @media (max-height: 820px) and (min-width: 901px) and (orientation: landscape) {
             body { overflow: auto; }
             .layout { min-height: 100vh; height: auto; align-items: stretch; }
-            .hero, .form-side { overflow-y: auto; max-height: none; }
+            .hero, .form-side { overflow-y: visible; max-height: none; }
+            .hero-motto { display: none; }
         }
         @media (max-height: 500px) and (max-width: 900px) {
             .hero { min-height: 18vh; padding: 14px 20px; }
