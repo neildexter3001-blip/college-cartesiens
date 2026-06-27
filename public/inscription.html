@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Collège Privé Les Cartésiens - Inscription</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            background: linear-gradient(135deg, #e8e0d8 0%, #d4c8bc 50%, #c8b8a8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 780px;
+            perspective: 1000px;
+            background: linear-gradient(145deg, #faf6f2, #f0ebe5);
+            border-radius: 24px;
+            box-shadow: 
+                20px 20px 60px rgba(128, 0, 32, 0.15),
+                -20px -20px 60px rgba(255, 255, 255, 0.8),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) rotateX(5deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        /* ===== 3D HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #1a0a0f 0%, #4a0012 40%, #800020 70%, #a00030 100%);
+            color: white;
+            padding: 24px 40px 38px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #d4af37, #f0d878, #d4af37, transparent);
+            z-index: 2;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 250px;
+            height: 250px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .header-circle-2 {
+            position: absolute;
+            bottom: -60px;
+            left: -60px;
+            width: 180px;
+            height: 180px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .header-circle-3 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            border: 1px solid rgba(212, 175, 55, 0.06);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .header-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            background: #ffffff;
+            border-radius: 50%;
+            margin-bottom: 16px;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.18),
+                inset 0 -2px 4px rgba(0,0,0,0.05);
+            font-size: 1.6em;
+            transform: translateZ(30px);
+            overflow: hidden;
+            padding: 4px;
+        }
+
+        .school-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .school-name {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #ffffff, #f0d878, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transform: translateZ(20px);
+        }
+
+        .school-subtitle {
+            font-size: 0.85em;
+            opacity: 0.7;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            color: #d4af37;
+            transform: translateZ(15px);
+        }
+
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 0 auto 20px;
+            border-radius: 2px;
+        }
+
+        .slogan {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 0.95em;
+            font-weight: 300;
+            font-style: italic;
+            opacity: 0.8;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.85);
+            transform: translateZ(10px);
+        }
+
+        .header-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            z-index: 2;
+        }
+
+        .header-wave svg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+        }
+
+        /* ===== FORM CONTAINER ===== */
+        .form-container {
+            padding: 28px 32px;
+        }
+
+        /* ===== 3D PROGRESS BAR ===== */
+        .progress-container {
+            margin-bottom: 24px;
+            display: none;
+            background: linear-gradient(145deg, #f0ebe5, #faf6f2);
+            padding: 12px 16px;
+            border-radius: 14px;
+            box-shadow: 
+                4px 4px 10px rgba(128, 0, 32, 0.05),
+                -4px -4px 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(145deg, #e0d8d0, #f5f0ec);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.5);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #800020, #c00040, #d4af37);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(128, 0, 32, 0.3);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* ===== 3D NOTIFICATION ===== */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            z-index: 9999;
+            min-width: 260px;
+            max-width: 90%;
+            padding: 15px 22px 15px 18px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1em;
+            line-height: 1.45;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 18px 50px rgba(0,0,0,0.22), 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(-50%) translateY(-160%);
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 12px; bottom: 12px;
+            width: 5px;
+            border-radius: 5px;
+            background: currentColor;
+            opacity: 0.85;
+        }
+
+        .notification span { position: relative; z-index: 1; }
+        #notif-icon { font-size: 1.25em; line-height: 1; }
+
+        .notification.show {
+            display: flex;
+            animation: toastSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .notification.show.hide {
+            animation: toastSlideOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        @keyframes toastSlideIn {
+            0%   { opacity: 0; transform: translateX(-50%) translateY(-160%); }
+            60%  { opacity: 1; transform: translateX(-50%) translateY(10%); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes toastSlideOut {
+            from { opacity: 1; transform: translateX(-50%) translateY(0); }
+            to   { opacity: 0; transform: translateX(-50%) translateY(-160%); }
+        }
+
+        .notification.success {
+            background: linear-gradient(145deg, #eafaf0, #d6f3e0);
+            color: #1b7a3e;
+        }
+
+        .notification.error {
+            background: linear-gradient(145deg, #ffeef0, #ffd9de);
+            color: #c0283a;
+        }
+
+        .notification.info {
+            background: linear-gradient(145deg, #fff6e0, #ffeab8);
+            color: #c77f12;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* ===== 3D MATRICULE SECTION ===== */
+        .matricule-section {
+            background: linear-gradient(145deg, #fdf6f8, #ffffff);
+            border: 2px solid #800020;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            animation: pulseBorder 2.5s infinite;
+            box-shadow: 
+                8px 8px 20px rgba(128, 0, 32, 0.1),
+                -8px -8px 20px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes pulseBorder {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(128, 0, 32, 0.18), 8px 8px 20px rgba(128, 0, 32, 0.1), -8px -8px 20px rgba(255, 255, 255, 0.8); }
+            50% { box-shadow: 0 0 0 10px rgba(128, 0, 32, 0), 8px 8px 20px rgba(128, 0, 32, 0.1), -8px -8px 20px rgba(255, 255, 255, 0.8); }
+        }
+
+        .matricule-section .section-title {
+            color: #800020;
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .matricule-section .section-title::before {
+            content: '🎓';
+            font-size: 1.3em;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e0d5d8;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f8f5f3);
+            color: #333;
+            font-family: Arial, Helvetica, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            height: 42px;
+            box-shadow: 
+                inset 2px 2px 5px rgba(0,0,0,0.03),
+                inset -2px -2px 5px rgba(255,255,255,0.8);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #800020;
+            box-shadow: 
+                0 0 0 3px rgba(128, 0, 32, 0.1),
+                inset 2px 2px 5px rgba(0,0,0,0.03),
+                inset -2px -2px 5px rgba(255,255,255,0.8);
+            transform: translateY(-2px);
+        }
+
+        .input-group input.valid {
+            border-color: #4caf50;
+            background: linear-gradient(145deg, #f8faf8, #f1f8e9);
+        }
+
+        .input-group input.invalid {
+            border-color: #c62828;
+            background: linear-gradient(145deg, #fff5f5, #ffebee);
+        }
+
+        .input-group input::placeholder {
+            color: #aaa;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .input-group input:disabled {
+            background: #f0ece8;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .format-hint {
+            margin-top: 10px;
+            font-size: 0.82em;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .format-hint.valid {
+            color: #4caf50;
+        }
+
+        .format-hint.invalid {
+            color: #c62828;
+        }
+
+        /* ===== HIDDEN SECTIONS ===== */
+        .hidden-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hidden-section.show {
+            display: block;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== 3D SECTION CARDS ===== */
+        .section-card {
+            background: linear-gradient(145deg, #ffffff, #f5f0ec);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 
+                8px 8px 20px rgba(128, 0, 32, 0.06),
+                -8px -8px 20px rgba(255, 255, 255, 0.8);
+            transform-style: preserve-3d;
+        }
+
+        .section-card:hover {
+            box-shadow: 
+                12px 12px 30px rgba(128, 0, 32, 0.1),
+                -8px -8px 20px rgba(255, 255, 255, 0.8);
+            transform: translateY(-3px) translateZ(10px);
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(to bottom, #800020, #d4af37);
+            border-radius: 18px 0 0 18px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1.5px solid #f5f0ee;
+        }
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(145deg, #800020, #b00030);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1em;
+            box-shadow: 
+                3px 3px 8px rgba(128, 0, 32, 0.2),
+                -2px -2px 6px rgba(255, 255, 255, 0.3);
+            transform: translateZ(15px);
+        }
+
+        .section-title-text {
+            color: #2c1810;
+            font-size: 1.1em;
+            font-weight: 700;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .section-subtitle {
+            color: #a09088;
+            font-size: 0.82em;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .section-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.4s ease;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .status-dot.active {
+            background: #4caf50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.4), inset 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .status-dot.pending {
+            background: #f9a825;
+            box-shadow: 0 0 8px rgba(249, 168, 37, 0.4), inset 1px 1px 2px rgba(0,0,0,0.1);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .status-text {
+            font-size: 0.78em;
+            font-weight: 600;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .status-text.active {
+            color: #4caf50;
+        }
+
+        .status-text.pending {
+            color: #f9a825;
+        }
+
+        /* ===== 3D FORM GRID ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #5a4a42;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: color 0.3s ease;
+        }
+
+        .form-group:focus-within label {
+            color: #800020;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e0d8d4;
+            border-radius: 10px;
+            font-size: 0.92em;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #faf8f6);
+            color: #333;
+            font-family: Arial, Helvetica, sans-serif;
+            height: 40px;
+            box-shadow: 
+                inset 2px 2px 4px rgba(0,0,0,0.02),
+                inset -2px -2px 4px rgba(255,255,255,0.8);
+        }
+
+        /* ===== FLECHE CUSTOM TOUS LES SELECT ===== */
+        /* La fleche SVG est definie sur TOUS les etats pour eviter
+           quelle disparaisse au changement de classe (filled, focus, disabled) */
+        .form-group select,
+        .form-group select.filled,
+        .form-group select:focus,
+        .form-group select:hover {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M3 5l5 6 5-6' stroke='%23800020' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 12px center !important;
+            background-size: 10px 10px !important;
+            padding-right: 36px !important;
+            cursor: pointer;
+        }
+
+        .form-group select:disabled {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M3 5l5 6 5-6' stroke='%23bbbbbb' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 12px center !important;
+            background-size: 10px 10px !important;
+        }
+
+        /* Responsive: fleche adaptee tablette */
+        @media (max-width: 768px) {
+            .form-group select,
+            .form-group select.filled,
+            .form-group select:focus,
+            .form-group select:hover {
+                background-position: right 11px center !important;
+                background-size: 9px 9px !important;
+                padding-right: 34px !important;
+            }
+            /* Icone calendrier date : decalee vers la gauche */
+            .form-group input[type="date"] {
+                padding-right: 36px;
+                -webkit-padding-end: 36px;
+            }
+            .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+                margin-right: 10px;
+                opacity: 0.6;
+                cursor: pointer;
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        /* Responsive: fleche adaptee mobile */
+        @media (max-width: 480px) {
+            .form-group select,
+            .form-group select.filled,
+            .form-group select:focus,
+            .form-group select:hover {
+                background-position: right 10px center !important;
+                background-size: 8px 8px !important;
+                padding-right: 32px !important;
+            }
+            /* Icone calendrier date : decalee vers la gauche */
+            .form-group input[type="date"] {
+                padding-right: 32px;
+                -webkit-padding-end: 32px;
+            }
+            .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+                margin-right: 10px;
+                opacity: 0.6;
+                cursor: pointer;
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #800020;
+            background: linear-gradient(145deg, #ffffff, #ffffff);
+            box-shadow: 
+                0 0 0 3px rgba(128, 0, 32, 0.08),
+                inset 2px 2px 4px rgba(0,0,0,0.02),
+                inset -2px -2px 4px rgba(255,255,255,0.8);
+            transform: translateY(-1px);
+        }
+
+        .form-group input.filled,
+        .form-group select.filled {
+            border-color: #4caf50;
+            background: linear-gradient(145deg, #f8faf8, #f1f8e9);
+        }
+
+        .form-group input:disabled,
+        .form-group select:disabled {
+            background: linear-gradient(145deg, #f0ece8, #e8e2df);
+            color: #666;
+            cursor: not-allowed;
+            border-color: #ddd5d0;
+            opacity: 0.7;
+        }
+
+        .form-group input.input-error {
+            border-color: #c62828;
+            background: linear-gradient(145deg, #fff5f5, #ffebee);
+            animation: shake 0.3s ease;
+        }
+
+        .input-error-msg {
+            font-size: 0.75em;
+            color: #c62828;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .input-error-msg.show {
+            display: block;
+        }
+
+        /* ===== PARENTS SUB-SECTIONS ===== */
+        .parent-subsection {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        .parent-subsection label {
+            color: #800020 !important;
+            font-size: 0.95em !important;
+            font-weight: 700 !important;
+            border-bottom: 2px solid #800020;
+            display: inline-block;
+            padding-bottom: 4px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* ===== STAGGERED ANIMATIONS ===== */
+        .hidden-section.show .form-group {
+            opacity: 0;
+            transform: translateX(-25px);
+            animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .hidden-section.show .form-group:nth-child(1) { animation-delay: 0.08s; }
+        .hidden-section.show .form-group:nth-child(2) { animation-delay: 0.16s; }
+        .hidden-section.show .form-group:nth-child(3) { animation-delay: 0.24s; }
+        .hidden-section.show .form-group:nth-child(4) { animation-delay: 0.32s; }
+        .hidden-section.show .form-group:nth-child(5) { animation-delay: 0.40s; }
+        .hidden-section.show .form-group:nth-child(6) { animation-delay: 0.48s; }
+        .hidden-section.show .form-group:nth-child(7) { animation-delay: 0.56s; }
+        .hidden-section.show .form-group:nth-child(8) { animation-delay: 0.64s; }
+        .hidden-section.show .form-group:nth-child(9) { animation-delay: 0.72s; }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== 3D SUBMIT SECTION ===== */
+        .submit-section {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .submit-section.show {
+            display: block;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ===== BANDEAU VERROUILLAGE ===== */
+        .verrouillage-banner {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+            padding: 14px 22px;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #fff8e1, #ffecb3);
+            color: #8a6500;
+            font-weight: 700;
+            font-size: 0.92em;
+            box-shadow:
+                4px 4px 10px rgba(128, 0, 32, 0.05),
+                -4px -4px 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .verrouillage-banner.show {
+            display: block;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(145deg, #800020, #a00030);
+            color: white;
+            border: none;
+            padding: 14px 50px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 
+                8px 8px 25px rgba(128, 0, 32, 0.25),
+                -4px -4px 10px rgba(255, 255, 255, 0.3),
+                inset 0 -3px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+            letter-spacing: 0.5px;
+            transform: translateZ(0);
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-4px) translateZ(10px);
+            box-shadow: 
+                12px 12px 35px rgba(128, 0, 32, 0.35),
+                -4px -4px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+            box-shadow: 
+                4px 4px 12px rgba(128, 0, 32, 0.2),
+                inset 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ===== 3D FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 18px;
+            color: #a09088;
+            font-size: 0.82em;
+            border-top: 1px solid #f5f0ee;
+            background: linear-gradient(145deg, #fdfcfb, #f5f0ec);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .footer strong {
+            color: #800020;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .footer .year {
+            display: block;
+            font-weight: 600;
+            color: #800020;
+            margin-bottom: 4px;
+            font-size: 0.95em;
+        }
+
+        .footer .motto {
+            display: block;
+            font-style: italic;
+            color: #d4af37;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 3D LOCKED OVERLAY ===== */
+        .locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .locked-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .locked-message {
+            background: linear-gradient(145deg, #ffffff, #f5f0ec);
+            padding: 18px 28px;
+            border-radius: 14px;
+            box-shadow: 
+                6px 6px 15px rgba(0,0,0,0.1),
+                -4px -4px 10px rgba(255,255,255,0.8);
+            text-align: center;
+            color: #888;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-radius: 18px;
+            }
+
+            .header {
+                padding: 30px 20px 40px;
+            }
+
+            .school-name {
+                font-size: 1.5em;
+            }
+
+            .school-subtitle {
+                font-size: 0.75em;
+                letter-spacing: 3px;
+            }
+
+            .school-badge {
+                width: 44px;
+                height: 44px;
+                font-size: 1.3em;
+            }
+
+            .slogan {
+                font-size: 0.85em;
+            }
+
+            .form-container {
+                padding: 20px 16px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .input-group input {
+                font-size: 16px; /* Prevent zoom on iOS */
+                height: 39.8px;
+            }
+
+            .form-group input,
+            .form-group select {
+                height: 39.8px;
+            }
+
+
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .section-card {
+                padding: 20px 16px;
+            }
+
+            .section-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .section-status {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            .btn-submit {
+                padding: 14px 35px;
+                font-size: 0.95em;
+                width: 100%;
+            }
+
+            .matricule-section {
+                padding: 20px 16px;
+            }
+
+            .footer {
+                font-size: 0.75em;
+                padding: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .school-name {
+                font-size: 1.25em;
+            }
+
+            .school-subtitle {
+                font-size: 0.7em;
+                letter-spacing: 2px;
+            }
+
+            .school-badge {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1em;
+            }
+
+            .slogan {
+                font-size: 0.8em;
+            }
+
+            .section-title-text {
+                font-size: 1em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .header {
+                padding: 25px 15px 35px;
+            }
+
+            .form-container {
+                padding: 16px 12px;
+            }
+
+            .matricule-section {
+                padding: 18px 14px;
+            }
+
+            .section-card {
+                padding: 18px 14px;
+            }
+
+            .input-group input,
+            .form-group input,
+            .form-group select {
+                font-size: 16px; /* iOS zoom fix */
+                padding: 12px 14px;
+                height: 43.8px;
+            }
+
+            }
+        }
+
+        /* ===== TEXTURE OVERLAY ===== */
+        .section-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(128, 0, 32, 0.015) 1px, transparent 1px);
+            background-size: 18px 18px;
+            pointer-events: none;
+        }
+
+        /* ===== 3D FLOATING ORBS ===== */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: #800020;
+            top: 10%;
+            left: -5%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 250px;
+            height: 250px;
+            background: #d4af37;
+            top: 60%;
+            right: -5%;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: #4a0012;
+            bottom: 10%;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOTIFICATION (placée hors des conteneurs 3D pour un centrage écran parfait) -->
+    <div id="notification" class="notification">
+        <span id="notif-icon"></span>
+        <span id="notif-message"></span>
+    </div>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-pattern"></div>
+            <div class="header-circle-2"></div>
+            <div class="header-circle-3"></div>
+            <div class="header-content">
+                <div class="school-badge"><img src="data:image/jpeg;base64,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" alt="Logo C.P.C.A"></div>
+                <h1 class="school-name">Collège Privé Les Cartésiens</h1>
+                <p class="school-subtitle">Abidjan</p>
+                <div class="divider"></div>
+                <p class="slogan">"L'une des clés de la réussite, c'est la confiance en soi,<br>l'une des clés de la confiance en soi, c'est la préparation"</p>
+            </div>
+            <div class="header-wave">
+                <svg viewBox="0 0 1440 40" preserveAspectRatio="none">
+                    <path fill="#faf6f2" d="M0,20 C360,40 720,0 1080,20 C1260,30 1380,25 1440,20 L1440,40 L0,40 Z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <!-- PROGRESS BAR -->
+            <div id="progress-container" class="progress-container">
+                <div class="progress-label">
+                    <span>Progression de l'inscription</span>
+                    <span id="progress-text">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- SECTION MATRICULE -->
+            <div class="matricule-section">
+                <div class="section-title">Matricule de l'Élève</div>
+                <div class="search-box">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="matricule" 
+                            placeholder="Ex: 12345678A ou A12345678" 
+                            autocomplete="off"
+                            maxlength="9"
+                        >
+                    </div>
+                </div>
+                <p class="format-hint" id="format-hint">
+                    🔒 Format requis : 8 chiffres + 1 lettre (ex: 12345678A ou A12345678)
+                </p>
+            </div>
+
+            <!-- SECTION INFORMATIONS ÉLÈVE -->
+            <div id="section-eleve" class="hidden-section">
+                <div class="section-card" style="position: relative;">
+                    <div class="locked-overlay" id="lock-eleve">
+                        <div class="locked-message">
+                            🔒 Complétez le matricule pour débloquer
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <div class="section-icon">👤</div>
+                        <div>
+                            <div class="section-title-text">Informations de l'Élève</div>
+                            <div class="section-subtitle">Données personnelles et d'identité</div>
+                        </div>
+                        <div class="section-status">
+                            <span class="status-dot" id="dot-eleve"></span>
+                            <span class="status-text" id="text-eleve">En attente</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nom">Nom de l'élève *</label>
+                            <input type="text" id="nom" placeholder="Nom de famille" oninput="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenoms">Prénoms de l'élève *</label>
+                            <input type="text" id="prenoms" placeholder="Prénom(s)" oninput="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sexe">Sexe *</label>
+                            <select id="sexe" onchange="checkSectionEleve()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date_naissance">Date de naissance *</label>
+                            <input type="date" id="date_naissance" onchange="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lieu_naissance">Lieu de naissance *</label>
+                            <input type="text" id="lieu_naissance" placeholder="Ville de naissance" oninput="checkSectionEleve()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nationalite">Nationalité *</label>
+                            <select id="nationalite" onchange="checkSectionEleve()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="CI">Ivoirienne</option>
+                                <option value="BF">Burkinabè</option>
+                                <option value="ML">Malienne</option>
+                                <option value="SN">Sénégalaise</option>
+                                <option value="GN">Guinéenne</option>
+                                <option value="TG">Togolaise</option>
+                                <option value="BJ">Béninoise</option>
+                                <option value="FR">Française</option>
+                                <option value="OTHER">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION INFORMATIONS SCOLAIRES -->
+            <div id="section-scolaire" class="hidden-section">
+                <div class="section-card" style="position: relative;">
+                    <div class="locked-overlay" id="lock-scolaire">
+                        <div class="locked-message">
+                            🔒 Complétez les informations de l'élève pour débloquer
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <div class="section-icon">📚</div>
+                        <div>
+                            <div class="section-title-text">Informations Scolaires</div>
+                            <div class="section-subtitle">Détails de la scolarité actuelle</div>
+                        </div>
+                        <div class="section-status">
+                            <span class="status-dot" id="dot-scolaire"></span>
+                            <span class="status-text" id="text-scolaire">En attente</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="classe_precedente">Classe précédente *</label>
+                            <input type="text" id="classe_precedente" placeholder="Ex: 6ème 2, CM2..." oninput="onClassePrecedenteChange(); checkSectionScolaire()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="classe">Classe *</label>
+                            <select id="classe" onchange="handleClasseChange()">
+                                <option value="">Sélectionnez...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="statut">Statut *</label>
+                            <select id="statut" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="AFF">AFF — Affecté</option>
+                                <option value="NAFF">NAFF — Non Affecté</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="qualite">Qualité *</label>
+                            <select id="qualite" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="RED">Redoublant</option>
+                                <option value="NRED">Non Redoublant</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="lv2-container" style="display: none;">
+                            <label for="lv2">LV2 (Langue Vivante 2) <span id="lv2-required">*</span></label>
+                            <select id="lv2" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="ALLEMAND">Allemand</option>
+                                <option value="ESPAGNOL">Espagnol</option>
+                            </select>
+                            <p style="font-size: 0.8em; color: #999; margin-top: 6px;">LV2 obligatoire pour 4ème à Tle A</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="regime">Régime *</label>
+                            <select id="regime" onchange="checkSectionScolaire()">
+                                <option value="">Sélectionnez...</option>
+                                <option value="BOURSSIER">Boursier</option>
+                                <option value="NON_BOURSSIER">Non Boursier</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION INFORMATIONS PARENTS -->
+            <div id="section-parents" class="hidden-section">
+                <div class="section-card" style="position: relative;">
+                    <div class="locked-overlay" id="lock-parents">
+                        <div class="locked-message">
+                            🔒 Complétez les informations scolaires pour débloquer
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <div class="section-icon">👨‍👩‍👧</div>
+                        <div>
+                            <div class="section-title-text">Informations des Parents</div>
+                            <div class="section-subtitle">Coordonnées du père et de la mère</div>
+                        </div>
+                        <div class="section-status">
+                            <span class="status-dot" id="dot-parents"></span>
+                            <span class="status-text" id="text-parents">En attente</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group parent-subsection">
+                            <label>👨 Informations du Père</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nom_pere">Nom du père *</label>
+                            <input type="text" id="nom_pere" placeholder="Nom de famille du père" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenoms_pere">Prénoms du père *</label>
+                            <input type="text" id="prenoms_pere" placeholder="Prénom(s) du père" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_pere">Contact du père *</label>
+                            <input type="tel" id="contact_pere" placeholder="Ex: 0123456789" oninput="validateContact(this); checkSectionParents()" inputmode="numeric">
+                            <span class="input-error-msg" id="error-contact-pere">Seuls les chiffres sont autorisés</span>
+                        </div>
+                        
+                        <div class="form-group parent-subsection">
+                            <label>👩 Informations de la Mère</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nom_mere">Nom de la mère *</label>
+                            <input type="text" id="nom_mere" placeholder="Nom de famille de la mère" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenoms_mere">Prénoms de la mère *</label>
+                            <input type="text" id="prenoms_mere" placeholder="Prénom(s) de la mère" oninput="checkSectionParents()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_mere">Contact de la mère *</label>
+                            <input type="tel" id="contact_mere" placeholder="Ex: 0123456789" oninput="validateContact(this); checkSectionParents()" inputmode="numeric">
+                            <span class="input-error-msg" id="error-contact-mere">Seuls les chiffres sont autorisés</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BANDEAU VERROUILLAGE -->
+            <div id="verrouillage-banner" class="verrouillage-banner">
+                🔒 Vos informations sont verrouillées. Contactez l'administration pour les modifier.
+            </div>
+
+            <!-- BOUTON SUBMIT -->
+            <div id="submit-section" class="submit-section">
+                <button class="btn-submit" id="btn-submit" onclick="soumettreInscription()" disabled>
+                    ✓ Finaliser la Pré-inscription
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span class="year">ANNÉE 2026 - 2027</span>
+            <span class="motto">NO JESUS NO LIFE</span>
+        </div>
+    </div>
+
+    <script>
+// ============================================================
+//  CONFIGURATION
+// ============================================================
+const API_URL = '';  // même serveur Render → URLs relatives
+
+// ============================================================
+//  ÉTAT GLOBAL
+// ============================================================
+let etapeActuelle    = 0;
+let sectionsAffichees = false;
+let matriculeTraite  = '';
+let autoNavTimeout   = null;
+let classesInfo      = {};
+const classesPretes  = chargerClasses();
+
+// ============================================================
+//  INIT — tout démarre ici, DOM garanti prêt
+// ============================================================
+window.addEventListener('load', function () {
+    var inp = document.getElementById('matricule');
+    if (!inp) { alert('ERREUR : champ matricule introuvable !'); return; }
+
+    inp.focus();
+
+    // Frappe dans le champ
+    inp.addEventListener('input', function () {
+        var val = inp.value.toUpperCase().trim();
+        inp.value = val;
+
+        var hint = document.getElementById('format-hint');
+
+        if (val.length === 0) {
+            inp.className = '';
+            hint.className = 'format-hint';
+            hint.innerHTML = '🔒 Format requis : 8 chiffres + 1 lettre (ex: 12345678A ou A12345678)';
+            cacherToutesSections();
+            matriculeTraite = '';
+            matriculeAffiche = '';
+            verrouilleActuel = null;
+            return;
+        }
+
+        if (!validerMatricule(val)) {
+            inp.className = 'invalid';
+            hint.className = 'format-hint invalid';
+            hint.innerHTML = '❌ Format invalide. Ex: 12345678A ou A12345678';
+            clearTimeout(autoNavTimeout);
+            cacherToutesSections();
+            matriculeTraite = '';
+            matriculeAffiche = '';
+            verrouilleActuel = null;
+            return;
+        }
+
+        // Format valide
+        inp.className = 'valid';
+        hint.className = 'format-hint valid';
+        hint.innerHTML = '✅ Format valide ! Recherche en cours...';
+
+        if (matriculeTraite !== val) {
+            clearTimeout(autoNavTimeout);
+            autoNavTimeout = setTimeout(function () {
+                rechercherEleve(val);
+            }, 600);
+        }
+    });
+
+    // Touche Entrée
+    inp.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            var val = inp.value.toUpperCase().trim();
+            if (validerMatricule(val)) rechercherEleve(val);
+        }
+    });
+});
+
+// ============================================================
+//  VALIDATION MATRICULE  (8 chiffres + 1 lettre, dans n'importe quel ordre)
+// ============================================================
+function validerMatricule(v) {
+    return /^(\d{8}[A-Za-z]|[A-Za-z]\d{8})$/.test(v);
+}
+
+// ============================================================
+//  CHARGEMENT DES CLASSES DEPUIS L'API (toutes classes, cache global)
+// ============================================================
+var classesSnapshot = '';
+var toutesLesClasses = []; // liste complète chargée depuis /api/classes
+
+async function chargerClasses() {
+    try {
+        var resp = await fetch(API_URL + '/api/classes?t=' + Date.now());
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        var classes = await resp.json();
+
+        var snapshot = JSON.stringify(classes);
+        if (snapshot === classesSnapshot) return;
+        classesSnapshot = snapshot;
+
+        toutesLesClasses = classes;
+        classesInfo = {};
+        classes.forEach(function (c) {
+            classesInfo[c.code] = { lv2: !!c.lv2, niveau: c.niveau, numero: c.numero };
+        });
+
+        // Regénérer les suggestions si une classe précédente est déjà remplie
+        var cpEl = document.getElementById('classe_precedente');
+        if (cpEl && cpEl.value.trim()) {
+            clearTimeout(classesPrecedenteTimeout);
+            classesPrecedenteTimeout = setTimeout(function () {
+                suggererClassesDepuisPrecedente(cpEl.value.trim());
+            }, 300);
+        }
+
+    } catch (err) {
+        console.error('chargerClasses erreur:', err);
+        if (!classesSnapshot) {
+            var select = document.getElementById('classe');
+            select.innerHTML = '<option value="">⚠️ Erreur connexion serveur</option>';
+            select.disabled = true;
+        }
+    }
+}
+
+// Rafraîchissement automatique des classes toutes les 5 secondes
+var classeSelectOuvert = false;
+var classesPrecedenteTimeout = null;
+
+window.addEventListener('load', function () {
+    var selectClasse = document.getElementById('classe');
+    if (selectClasse) {
+        selectClasse.addEventListener('focus', function () { classeSelectOuvert = true; });
+        selectClasse.addEventListener('blur', function () { classeSelectOuvert = false; });
+    }
+    setInterval(function () {
+        if (classeSelectOuvert) return;
+        chargerClasses();
+    }, 5000);
+});
+
+document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) chargerClasses();
+});
+
+// ============================================================
+//  SUGGESTION INTELLIGENTE DE CLASSES
+// ============================================================
+// Appelée à chaque modification du champ "classe_precedente"
+async function suggererClassesDepuisPrecedente(classePrec) {
+    var select = document.getElementById('classe');
+    var valeurCourante = select.value;
+
+    if (!classePrec || classePrec.trim().length < 2) {
+        // Champ vide ou trop court : afficher toutes les classes
+        afficherToutesClassesDansSelect(valeurCourante);
+        return;
+    }
+
+    try {
+        var resp = await fetch(API_URL + '/api/classes/suggerer?classe_precedente=' + encodeURIComponent(classePrec));
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        var data = await resp.json();
+        var candidates = data.classes_candidates || [];
+
+        select.disabled = false;
+
+        if (candidates.length === 0) {
+            // Aucune suggestion : afficher toutes les classes
+            afficherToutesClassesDansSelect(valeurCourante);
+            return;
+        }
+
+        var html = '<option value="">Sélectionnez...</option>';
+        candidates.forEach(function (c) {
+            var lv2 = classesInfo[c.code] ? (classesInfo[c.code].lv2 ? '1' : '0') : '0';
+            var badge = c.type === 'redoublement' ? ' 🔄' : ' ➡️';
+            html += '<option value="' + c.code + '" data-lv2="' + lv2 + '">' + c.label + badge + '</option>';
+        });
+        select.innerHTML = html;
+
+        // Restaure la sélection si elle est toujours dans les candidates
+        if (valeurCourante && candidates.some(function (c) { return c.code === valeurCourante; })) {
+            select.value = valeurCourante;
+        } else {
+            select.value = '';
+        }
+
+        handleClasseChange();
+
+    } catch (err) {
+        console.error('suggererClassesDepuisPrecedente erreur:', err);
+        afficherToutesClassesDansSelect(valeurCourante);
+    }
+}
+
+// Fallback : affiche toutes les classes dans le select (comportement original)
+function afficherToutesClassesDansSelect(valeurCourante) {
+    var select = document.getElementById('classe');
+    if (toutesLesClasses.length === 0) {
+        select.innerHTML = '<option value="">⚠️ Aucune classe — contactez l\'administration</option>';
+        select.disabled = true;
+        return;
+    }
+    select.disabled = false;
+    var parNiveau = {};
+    toutesLesClasses.forEach(function (c) {
+        if (!parNiveau[c.niveau_label]) parNiveau[c.niveau_label] = [];
+        parNiveau[c.niveau_label].push(c);
+    });
+    var html = '<option value="">Sélectionnez...</option>';
+    Object.keys(parNiveau).forEach(function (niv) {
+        html += '<optgroup label="' + niv + '">';
+        parNiveau[niv].forEach(function (c) {
+            html += '<option value="' + c.code + '" data-lv2="' + (c.lv2 ? '1' : '0') + '">' + c.label + '</option>';
+        });
+        html += '</optgroup>';
+    });
+    select.innerHTML = html;
+    if (valeurCourante && classesInfo[valeurCourante]) {
+        select.value = valeurCourante;
+    }
+    handleClasseChange();
+}
+
+// ============================================================
+//  RECHERCHE ÉLÈVE
+// ============================================================
+// Matricule actuellement affiché dans le formulaire + son état de verrouillage
+// connu, pour le "stream" de statut (cf. plus bas) qui revérifie périodiquement
+// si l'admin a verrouillé/déverrouillé pendant que le parent a la page ouverte.
+var matriculeAffiche = '';
+var verrouilleActuel = null; // null = pas encore d'élève affiché (nouvelle inscription)
+
+async function rechercherEleve(matricule) {
+    if (!matricule) matricule = document.getElementById('matricule').value.toUpperCase().trim();
+    if (!validerMatricule(matricule)) {
+        showNotification('error', 'Matricule invalide : 8 chiffres + 1 lettre requis.');
+        return;
+    }
+
+    matriculeTraite = matricule;
+    document.getElementById('format-hint').innerHTML = '⏳ Recherche...';
+
+    await classesPretes;
+
+    try {
+        var resp = await fetch(API_URL + '/api/eleves/verifier/' + matricule);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        var data = await resp.json();
+
+        document.getElementById('format-hint').innerHTML = '✅ Format valide !';
+
+        if (data.existe && data.eleve) {
+            // "En attente" = élève déjà présent en base (ex: importé par l'admin)
+            // mais jamais soumis par le parent. Il doit se comporter comme une
+            // nouvelle inscription (progression par remplissage des champs),
+            // pas comme un élève pré-inscrit/inscrit (enchaînement auto à 2s).
+            var enAttente = !data.eleve.date_preinscription && !data.eleve.date_inscription;
+
+            if (enAttente) {
+                showNotification('success', 'Élève trouvé — veuillez compléter le formulaire');
+                remplirChampsProgressif(data.eleve);
+                matriculeAffiche = matricule;
+                verrouilleActuel = null;
+                afficherToutesSections(); // progression normale par saisie
+            } else if (data.verrouille) {
+                showNotification('info', data.message || 'Vos informations sont verrouillées. Contactez l\'administration pour les modifier.');
+                remplirChamps(data.eleve, true);
+                matriculeAffiche = matricule;
+                verrouilleActuel = true;
+            } else {
+                showNotification('success', 'Élève trouvé — vous pouvez modifier les données');
+                remplirChamps(data.eleve, false); // enchaînement auto à 2s
+                matriculeAffiche = matricule;
+                verrouilleActuel = false;
+            }
+        } else {
+            showNotification('info', 'Nouvelle inscription — veuillez compléter le formulaire');
+            viderChamps();
+            matriculeAffiche = matricule;
+            verrouilleActuel = null;
+            afficherToutesSections(); // élève inexistant : progression normale par saisie
+        }
+
+    } catch (err) {
+        console.error('rechercherEleve erreur:', err);
+        document.getElementById('format-hint').innerHTML = '❌ Erreur de connexion';
+        showNotification('error', 'Impossible de joindre le serveur. Vérifiez votre connexion.');
+    }
+}
+
+// ============================================================
+//  STREAM DU VERROUILLAGE (réactivité quasi instantanée)
+// ============================================================
+// Revérifie toutes les 3 secondes si l'admin a verrouillé/déverrouillé
+// l'élève actuellement affiché, pour que les champs se grisent/dégrisent
+// automatiquement chez le parent sans qu'il ait besoin de retaper son
+// matricule. On ne touche à rien si rien n'a changé (pas de clignotement).
+async function streamVerrouillage() {
+    if (!matriculeAffiche) return; // aucun élève affiché pour l'instant
+    if (verrouilleActuel === null) return; // élève "en attente" ou nouvelle inscription : pas de verrou à surveiller, on ne dérange pas la saisie en cours
+    try {
+        var resp = await fetch(API_URL + '/api/eleves/verifier/' + matriculeAffiche + '?t=' + Date.now());
+        if (!resp.ok) return; // échec silencieux → nouvel essai au prochain cycle
+        var data = await resp.json();
+        if (!data.existe || !data.eleve) return;
+
+        var nouvelEtat = !!data.verrouille;
+        if (nouvelEtat === verrouilleActuel) return; // rien n'a changé
+
+        verrouilleActuel = nouvelEtat;
+        if (nouvelEtat) {
+            // L'admin vient de verrouiller : on grise les champs avec les
+            // dernières données connues côté serveur (au cas où l'admin ait
+            // aussi corrigé des infos avant de verrouiller).
+            showNotification('info', data.message || 'Vos informations sont verrouillées. Contactez l\'administration pour les modifier.');
+            remplirChamps(data.eleve, true);
+        } else {
+            // L'admin vient de déverrouiller : on dégrise et on relance la
+            // progression normale par étapes.
+            showNotification('success', 'L\'administration a autorisé la modification — vous pouvez modifier vos données');
+            remplirChamps(data.eleve, false);
+        }
+    } catch (err) {
+        console.warn('streamVerrouillage échoué (réessai dans 3s) :', err.message);
+    }
+}
+setInterval(streamVerrouillage, 3000);
+
+// ============================================================
+//  REMPLIR / VIDER LES CHAMPS
+// ============================================================
+var CHAMPS = [
+    'nom','prenoms','sexe','date_naissance','lieu_naissance','nationalite',
+    'classe','classe_precedente','statut','qualite','lv2','regime',
+    'nom_pere','prenoms_pere','contact_pere','nom_mere','prenoms_mere','contact_mere'
+];
+
+// Remplit les champs du formulaire avec les données d'un élève, sans toucher
+// à l'affichage des sections (factorisé pour les deux variantes ci-dessous).
+function injecterValeursChamps(eleve, verrouille) {
+    CHAMPS.forEach(function (champ) {
+        var el = document.getElementById(champ);
+        if (!el) return;
+        var val = eleve[champ] || '';
+        if (champ === 'date_naissance' && val) val = String(val).substring(0, 10);
+        if (champ === 'classe' && val && el.tagName === 'SELECT') {
+            if (!Array.from(el.options).some(function (o) { return o.value === val; })) {
+                var opt = document.createElement('option');
+                opt.value = val; opt.textContent = '⚠️ ' + val; opt.dataset.lv2 = '0';
+                el.appendChild(opt);
+            }
+        }
+        el.value = val;
+        el.disabled = !!verrouille;
+        if (val) el.classList.add('filled'); else el.classList.remove('filled');
+    });
+
+    // Si une classe précédente est présente, regénérer les suggestions de classe
+    // mais conserver la valeur actuelle de "classe" (déjà settée ci-dessus)
+    var classePrec = eleve['classe_precedente'] || '';
+    var classeActuelle = eleve['classe'] || '';
+    if (classePrec && !verrouille) {
+        clearTimeout(classesPrecedenteTimeout);
+        classesPrecedenteTimeout = setTimeout(function () {
+            suggererClassesDepuisPrecedente(classePrec).then(function () {
+                // Restaurer la valeur de classe après que les suggestions soient chargées
+                if (classeActuelle) {
+                    var selectClasse = document.getElementById('classe');
+                    if (!Array.from(selectClasse.options).some(function (o) { return o.value === classeActuelle; })) {
+                        var opt = document.createElement('option');
+                        opt.value = classeActuelle;
+                        var lv2 = classesInfo[classeActuelle] ? (classesInfo[classeActuelle].lv2 ? '1' : '0') : '0';
+                        opt.textContent = '⚠️ ' + classeActuelle;
+                        opt.dataset.lv2 = lv2;
+                        selectClasse.appendChild(opt);
+                    }
+                    selectClasse.value = classeActuelle;
+                    handleClasseChange();
+                }
+            });
+        }, 300);
+    } else {
+        handleClasseChange();
+    }
+}
+
+// Cas pré-inscrit/inscrit : remplit les champs et affiche les sections soit
+// verrouillées (tout d'un coup, grisé), soit avec l'enchaînement auto à 2s.
+function remplirChamps(eleve, verrouille) {
+    injecterValeursChamps(eleve, verrouille);
+    appliquerVerrouillage(verrouille);
+    if (!verrouille) {
+        // Élève pré-inscrit/inscrit, non verrouillé : on enchaîne les 3
+        // sections étape par étape, 2 secondes entre chaque, SANS dépendre
+        // de la validation des champs (checkSection*), qui suppose une
+        // saisie active et peut bloquer la progression si un champ
+        // optionnel est vide pour cet élève.
+        afficherSectionsExistant();
+    }
+}
+
+// Cas "en attente" : élève déjà présent en base (ex: importé par l'admin)
+// mais jamais soumis par le parent. Remplit les champs déjà connus, mais
+// laisse la progression normale par remplissage (checkSection*) décider de
+// l'apparition des sections suivantes — exactement comme une nouvelle
+// inscription, puisque le parent doit pouvoir compléter ce qui manque.
+function remplirChampsProgressif(eleve) {
+    injecterValeursChamps(eleve, false);
+    setTimeout(function () { checkSectionEleve(); }, 100);
+    setTimeout(function () { checkSectionScolaire(); }, 900);
+    setTimeout(function () { checkSectionParents(); }, 1700);
+}
+
+// Enchaîne l'affichage des 3 sections (Élève → Scolaire → Parents) pour un
+// élève déjà existant, à 2 secondes d'intervalle, puis affiche le bouton
+// Finaliser. Annule tout enchaînement précédent en cours (ex: si le parent
+// retape vite un autre matricule).
+var enchainementTimeouts = [];
+function afficherSectionsExistant() {
+    enchainementTimeouts.forEach(function (t) { clearTimeout(t); });
+    enchainementTimeouts = [];
+
+    sectionsAffichees = true;
+    document.getElementById('progress-container').classList.add('show');
+    etapeActuelle = 1; updateProgress();
+    afficherSection('section-eleve', 'lock-eleve');
+    setSectionStatus('eleve', 'active');
+    scrollToElement('section-eleve');
+
+    enchainementTimeouts.push(setTimeout(function () {
+        etapeActuelle = 2; updateProgress();
+        afficherSection('section-scolaire', 'lock-scolaire');
+        setSectionStatus('scolaire', 'active');
+        scrollToElement('section-scolaire');
+    }, 2000));
+
+    enchainementTimeouts.push(setTimeout(function () {
+        etapeActuelle = 3; updateProgress();
+        afficherSection('section-parents', 'lock-parents');
+        setSectionStatus('parents', 'active');
+        scrollToElement('section-parents');
+    }, 4000));
+
+    enchainementTimeouts.push(setTimeout(function () {
+        etapeActuelle = 4; updateProgress();
+        document.getElementById('submit-section').classList.add('show');
+        document.getElementById('btn-submit').disabled = false;
+        scrollToElement('submit-section');
+    }, 6000));
+}
+
+// Affiche/masque le bandeau de verrouillage et fige/débloque le bouton Finaliser.
+// En mode verrouillé, on affiche directement les 3 sections (Élève, Scolaire,
+// Parents) jusqu'au bandeau — le parent doit voir TOUTES ses informations,
+// sans attendre la progression normale par étapes (qui suppose une saisie active).
+function appliquerVerrouillage(verrouille) {
+    var banner = document.getElementById('verrouillage-banner');
+    var submitSection = document.getElementById('submit-section');
+    var btn = document.getElementById('btn-submit');
+    if (verrouille) {
+        sectionsAffichees = true;
+        document.getElementById('progress-container').classList.add('show');
+        etapeActuelle = 4; updateProgress();
+        afficherSection('section-eleve', 'lock-eleve');
+        afficherSection('section-scolaire', 'lock-scolaire');
+        afficherSection('section-parents', 'lock-parents');
+        setSectionStatus('eleve', 'active');
+        setSectionStatus('scolaire', 'active');
+        setSectionStatus('parents', 'active');
+        banner.classList.add('show');
+        submitSection.classList.remove('show');
+        btn.disabled = true;
+    } else {
+        banner.classList.remove('show');
+        btn.disabled = true; // redevient actif normalement via checkSectionParents()
+    }
+}
+
+function viderChamps() {
+    CHAMPS.forEach(function (champ) {
+        var el = document.getElementById(champ);
+        if (!el) return;
+        el.value = '';
+        el.disabled = false;
+        el.classList.remove('filled');
+    });
+    handleClasseChange();
+    appliquerVerrouillage(false);
+}
+
+// ============================================================
+//  AFFICHAGE / MASQUAGE DES SECTIONS
+// ============================================================
+function afficherToutesSections() {
+    if (sectionsAffichees) return;
+    sectionsAffichees = true;
+    document.getElementById('progress-container').classList.add('show');
+    etapeActuelle = 1;
+    updateProgress();
+    afficherSection('section-eleve', 'lock-eleve');
+    setSectionStatus('eleve', 'pending');
+    scrollToElement('section-eleve');
+}
+
+function cacherToutesSections() {
+    enchainementTimeouts.forEach(function (t) { clearTimeout(t); });
+    enchainementTimeouts = [];
+    ['section-eleve','section-scolaire','section-parents','submit-section'].forEach(function (id) {
+        document.getElementById(id).classList.remove('show');
+    });
+    document.getElementById('verrouillage-banner').classList.remove('show');
+    ['eleve','scolaire','parents'].forEach(function (s) {
+        setSectionStatus(s, '');
+        document.getElementById('lock-' + s).classList.add('show');
+    });
+    document.getElementById('progress-container').classList.remove('show');
+    etapeActuelle = 0;
+    sectionsAffichees = false;
+    updateProgress();
+    document.getElementById('btn-submit').disabled = true;
+}
+
+function afficherSection(sectionId, lockId) {
+    document.getElementById(sectionId).classList.add('show');
+    if (lockId) document.getElementById(lockId).classList.remove('show');
+}
+
+// ============================================================
+//  VÉRIFICATIONS SECTIONS (navigation automatique)
+// ============================================================
+function checkSectionEleve() {
+    var champs = ['nom','prenoms','sexe','date_naissance','lieu_naissance','nationalite'];
+    var ok = champs.every(function (c) {
+        var el = document.getElementById(c);
+        var v = el.value.trim();
+        if (v) { el.classList.add('filled'); return true; }
+        el.classList.remove('filled'); return false;
+    });
+    if (ok) {
+        setSectionStatus('eleve', 'active');
+        clearTimeout(autoNavTimeout);
+        autoNavTimeout = setTimeout(function () { afficherSectionScolaire(); }, 800);
+    } else {
+        setSectionStatus('eleve', 'pending');
+    }
+}
+
+function afficherSectionScolaire() {
+    if (etapeActuelle >= 2) return;
+    etapeActuelle = 2; updateProgress();
+    afficherSection('section-scolaire', 'lock-scolaire');
+    setSectionStatus('scolaire', 'pending');
+    scrollToElement('section-scolaire');
+}
+
+function checkSectionScolaire() {
+    var classe = document.getElementById('classe').value;
+    var lv2Requis = !!classe && classesInfo[classe] && classesInfo[classe].lv2;
+    var champs = ['classe','classe_precedente','statut','qualite','regime'];
+    var ok = champs.every(function (c) {
+        var el = document.getElementById(c);
+        var v = el.value.trim();
+        if (v) { el.classList.add('filled'); return true; }
+        el.classList.remove('filled'); return false;
+    });
+    if (lv2Requis) {
+        var lv2El = document.getElementById('lv2');
+        if (lv2El.value.trim() && lv2El.value !== 'N/A') {
+            lv2El.classList.add('filled');
+        } else {
+            lv2El.classList.remove('filled'); ok = false;
+        }
+    }
+    if (ok) {
+        setSectionStatus('scolaire', 'active');
+        clearTimeout(autoNavTimeout);
+        autoNavTimeout = setTimeout(function () { afficherSectionParents(); }, 800);
+    } else {
+        setSectionStatus('scolaire', 'pending');
+    }
+}
+
+function afficherSectionParents() {
+    if (etapeActuelle >= 3) return;
+    etapeActuelle = 3; updateProgress();
+    afficherSection('section-parents', 'lock-parents');
+    setSectionStatus('parents', 'pending');
+    scrollToElement('section-parents');
+}
+
+function checkSectionParents() {
+    var champs = ['nom_pere','prenoms_pere','contact_pere','nom_mere','prenoms_mere','contact_mere'];
+    var ok = champs.every(function (c) {
+        var el = document.getElementById(c);
+        var v = el.value.trim();
+        if (c.includes('contact')) v = v.replace(/\D/g,'');
+        if (v) { el.classList.add('filled'); return true; }
+        el.classList.remove('filled'); return false;
+    });
+    if (ok) {
+        setSectionStatus('parents', 'active');
+        etapeActuelle = 4; updateProgress();
+        document.getElementById('submit-section').classList.add('show');
+        document.getElementById('btn-submit').disabled = false;
+        scrollToElement('submit-section');
+    } else {
+        setSectionStatus('parents', 'pending');
+        document.getElementById('btn-submit').disabled = true;
+    }
+}
+
+// ============================================================
+//  GESTION CLASSE PRÉCÉDENTE → SUGGESTION AUTOMATIQUE
+// ============================================================
+
+// Classes primaires qui NE peuvent PAS entrer au collège directement
+var CLASSES_PRIMAIRES_INVALIDES = ['CP1', 'CP2', 'CE1', 'CE2', 'CM1'];
+
+function onClassePrecedenteChange() {
+    var val = document.getElementById('classe_precedente').value.trim().toUpperCase();
+    var input = document.getElementById('classe_precedente');
+
+    // Vider le message d'erreur précédent s'il existe
+    var erreurExistante = document.getElementById('erreur-classe-precedente');
+    if (erreurExistante) erreurExistante.remove();
+
+    clearTimeout(classesPrecedenteTimeout);
+
+    // Vérifier si c'est une classe primaire invalide
+    if (CLASSES_PRIMAIRES_INVALIDES.indexOf(val) !== -1) {
+        // Afficher message d'erreur sous le champ
+        var erreur = document.createElement('div');
+        erreur.id = 'erreur-classe-precedente';
+        erreur.style.cssText = 'color:#c0283a;font-size:0.82em;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:5px;';
+        erreur.innerHTML = '❌ La classe <strong>' + val + '</strong> ne permet pas d\'entrer au collège. Seul le <strong>CM2</strong> est accepté.';
+        input.parentNode.appendChild(erreur);
+
+        // Vider le select classe et le désactiver
+        var select = document.getElementById('classe');
+        select.innerHTML = '<option value="">-- Choisissez d\'abord une classe précédente valide --</option>';
+        select.disabled = true;
+        input.classList.add('invalid');
+        input.classList.remove('filled');
+        return;
+    }
+
+    input.classList.remove('invalid');
+    if (val) input.classList.add('filled');
+
+    classesPrecedenteTimeout = setTimeout(function () {
+        suggererClassesDepuisPrecedente(val);
+    }, 600);
+}
+
+// ============================================================
+//  GESTION LV2 CONDITIONNELLE
+// ============================================================
+function handleClasseChange() {
+    var classeSelect = document.getElementById('classe');
+    var classe = classeSelect.value;
+    var lv2Container = document.getElementById('lv2-container');
+    var lv2Select = document.getElementById('lv2');
+    var lv2Required = document.getElementById('lv2-required');
+    var opt = classeSelect.selectedOptions[0];
+    var lv2Requis = !!classe && opt && opt.dataset.lv2 === '1';
+
+    if (!classe) {
+        lv2Container.style.display = 'none';
+        lv2Select.value = '';
+        if (lv2Required) lv2Required.textContent = '*';
+    } else if (lv2Requis) {
+        lv2Container.style.display = 'block';
+        // Pré-remplir la LV2 automatiquement selon la parité du numéro de classe
+        var numClasse = parseInt(classe.split('_').pop(), 10);
+        if (!isNaN(numClasse)) {
+            var lv2Auto = (numClasse % 2 === 0) ? 'ALLEMAND' : 'ESPAGNOL';
+            if (!lv2Select.value || lv2Select.value === 'N/A') {
+                lv2Select.value = lv2Auto;
+            }
+        }
+        if (lv2Select.value === 'N/A') lv2Select.value = '';
+        if (lv2Required) lv2Required.textContent = '*';
+    } else {
+        lv2Container.style.display = 'none';
+        lv2Select.value = 'N/A';
+        if (lv2Required) lv2Required.textContent = '';
+    }
+    setTimeout(function () { checkSectionScolaire(); }, 50);
+}
+
+// ============================================================
+//  VALIDATION CONTACT
+// ============================================================
+function validateContact(input) {
+    var clean = input.value.replace(/\D/g, '');
+    input.value = clean;
+}
+
+// ============================================================
+//  SOUMISSION
+// ============================================================
+async function soumettreInscription() {
+    var btn = document.getElementById('btn-submit');
+    btn.innerHTML = '⏳ Traitement en cours...';
+    btn.disabled = true;
+
+    var data = {};
+    CHAMPS.forEach(function (c) {
+        var el = document.getElementById(c);
+        data[c] = el ? el.value : '';
+    });
+    data.matricule = document.getElementById('matricule').value.toUpperCase().trim();
+    if (!data.lv2) data.lv2 = 'N/A';
+
+    try {
+        var resp = await fetch(API_URL + '/api/eleves/inscrire', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        var result = await resp.json();
+        if (!resp.ok) throw new Error(result.error || 'Erreur serveur');
+        showNotification('success', 'Pré-inscription enregistrée avec succès !');
+        btn.innerHTML = '✓ Pré-inscription Enregistrée';
+        btn.style.background = '#2e7d32';
+        setTimeout(function () { reinitialiserFormulaire(); }, 2000);
+    } catch (err) {
+        showNotification('error', err.message || 'Erreur de connexion.');
+        btn.innerHTML = '✓ Finaliser l\'Inscription';
+        btn.style.background = '';
+        btn.disabled = false;
+    }
+}
+
+// ============================================================
+//  RÉINITIALISATION
+// ============================================================
+function reinitialiserFormulaire() {
+    cacherToutesSections();
+    viderChamps();
+    var inp = document.getElementById('matricule');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    document.getElementById('format-hint').className = 'format-hint';
+    document.getElementById('format-hint').innerHTML = '🔒 Format requis : 8 chiffres + 1 lettre (ex: 12345678A ou A12345678)';
+    document.getElementById('notification').classList.remove('show');
+    var btn = document.getElementById('btn-submit');
+    btn.innerHTML = '✓ Finaliser l\'Inscription';
+    btn.style.background = '';
+    btn.disabled = true;
+    matriculeTraite = '';
+    matriculeAffiche = '';
+    verrouilleActuel = null;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(function () { inp.focus(); }, 500);
+}
+
+// ============================================================
+//  UTILITAIRES UI
+// ============================================================
+function showNotification(type, message) {
+    var notif = document.getElementById('notification');
+    var icon  = document.getElementById('notif-icon');
+    var msg   = document.getElementById('notif-message');
+    icon.textContent = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+    msg.textContent = message;
+    clearTimeout(notif._t1); clearTimeout(notif._t2);
+    notif.className = 'notification ' + type + ' show';
+    notif.onclick = function () { notif.classList.add('hide'); notif._t2 = setTimeout(function(){ notif.className='notification'; }, 400); };
+    notif._t1 = setTimeout(function () { notif.classList.add('hide'); notif._t2 = setTimeout(function(){ notif.className='notification'; }, 400); }, 5000);
+}
+
+function updateProgress() {
+    var pcts = [0, 25, 50, 75, 100];
+    document.getElementById('progress-fill').style.width = pcts[etapeActuelle] + '%';
+    document.getElementById('progress-text').textContent = pcts[etapeActuelle] + '%';
+}
+
+function setSectionStatus(section, status) {
+    var dot  = document.getElementById('dot-'  + section);
+    var text = document.getElementById('text-' + section);
+    dot.className  = 'status-dot '  + status;
+    text.className = 'status-text ' + status;
+    text.textContent = status === 'active' ? 'Complété' : status === 'pending' ? 'En cours' : 'En attente';
+}
+
+function scrollToElement(id) {
+    setTimeout(function () {
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+}
+</script>
+
+</body>
+</html>
