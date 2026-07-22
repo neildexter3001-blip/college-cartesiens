@@ -1082,7 +1082,7 @@ app.put('/api/niveaux/:niveau/max', requireAuth, async (req, res) => {
     const niveau = req.params.niveau.toUpperCase();
     const max = parseInt(req.body.max_eleves, 10);
     if (!NIVEAUX_PAR_CODE[niveau]) return res.status(400).json({ error: 'Niveau inconnu' });
-    if (isNaN(max) || max < 1 || max > 200) return res.status(400).json({ error: 'Max invalide (entre 1 et 200)' });
+    if (isNaN(max) || max < 1 || max > 10000) return res.status(400).json({ error: 'Max invalide (entre 1 et 10000)' });
     try {
         await pool.query(`
             INSERT INTO niveaux_config (niveau, max_eleves, date_modification)
@@ -1102,7 +1102,7 @@ app.put('/api/classes/:code/max', requireAuth, async (req, res) => {
     // max peut être null (pour revenir au max du niveau) ou un entier
     if (max !== null && max !== undefined) {
         const n = parseInt(max, 10);
-        if (isNaN(n) || n < 1 || n > 200) return res.status(400).json({ error: 'Max invalide (entre 1 et 200)' });
+        if (isNaN(n) || n < 1 || n > 10000) return res.status(400).json({ error: 'Max invalide (entre 1 et 10000)' });
     }
     try {
         const result = await pool.query(
