@@ -808,6 +808,91 @@
             font-family: Arial, Helvetica, sans-serif;
         }
 
+        /* ===== PARENT INSCRIPTEUR : CHOIX QUI INSCRIT ===== */
+        .inscripteur-choice {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .choice-card {
+            position: relative;
+            border: 2px solid #e0d5d8;
+            border-radius: 14px;
+            padding: 16px 10px;
+            text-align: center;
+            cursor: pointer;
+            background: linear-gradient(145deg, #faf8f6, #f0ece8);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+        }
+        .choice-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-2px);
+            box-shadow: 4px 6px 14px rgba(128, 0, 32, 0.08);
+        }
+        .choice-card .choice-icon { font-size: 2em; display: block; margin-bottom: 6px; }
+        .choice-card .choice-label { font-weight: 700; color: #5a4a42; font-size: 0.95em; }
+        .choice-card .choice-check {
+            position: absolute; top: 8px; right: 8px;
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid #cbb8bc; background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8em; color: transparent; transition: all 0.2s;
+        }
+        .choice-card.selected {
+            border-color: #800020;
+            background: linear-gradient(145deg, #fff4f6, #ffe8ec);
+            box-shadow: 4px 6px 16px rgba(128, 0, 32, 0.15);
+        }
+        .choice-card.selected .choice-label { color: #800020; }
+        .choice-card.selected .choice-check {
+            border-color: #800020; background: #800020; color: #fff;
+        }
+        @media (max-width: 560px) {
+            .inscripteur-choice { grid-template-columns: 1fr; }
+            .choice-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; text-align: left; }
+            .choice-card .choice-icon { margin-bottom: 0; font-size: 1.6em; }
+        }
+
+        /* ===== CAPTURE PIECE D'IDENTITE ===== */
+        .piece-grid {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 4px;
+        }
+        @media (max-width: 560px) { .piece-grid { grid-template-columns: 1fr; } }
+        .piece-box {
+            border: 2px dashed #cbb8bc;
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            background: linear-gradient(145deg, #faf8f6, #f5f0ec);
+            transition: all 0.25s;
+        }
+        .piece-box.filled { border-style: solid; border-color: #2e7d32; background: linear-gradient(145deg,#f0faf2,#e6f5ea); }
+        .piece-box .piece-title { font-weight: 700; color: #5a4a42; font-size: 0.9em; margin-bottom: 10px; }
+        .piece-box.filled .piece-title { color: #2e7d32; }
+        .piece-preview {
+            width: 100%; height: 150px; border-radius: 10px; object-fit: cover;
+            margin-bottom: 10px; display: none; background: #fff; border: 1px solid #e0d5d8;
+        }
+        .piece-preview.show { display: block; }
+        .piece-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer;
+            font-weight: 700; font-size: 0.86em; color: #fff;
+            background: linear-gradient(145deg, #800020, #a3183a);
+            box-shadow: 3px 3px 8px rgba(128,0,32,0.2);
+            transition: all 0.2s; font-family: inherit;
+        }
+        .piece-btn:hover { transform: translateY(-1px); box-shadow: 4px 5px 12px rgba(128,0,32,0.28); }
+        .piece-btn.retake { background: linear-gradient(145deg, #6a5a52, #8a7a72); }
+        .piece-hint { font-size: 0.76em; color: #a09088; margin-top: 8px; }
+
         /* ===== STAGGERED ANIMATIONS ===== */
         .hidden-section.show .form-group {
             opacity: 0;
@@ -1476,6 +1561,99 @@
                 </div>
             </div>
 
+            <!-- SECTION PARENT INSCRIPTEUR -->
+            <div id="section-inscripteur" class="hidden-section">
+                <div class="section-card" style="position: relative;">
+                    <div class="locked-overlay" id="lock-inscripteur">
+                        <div class="locked-message">
+                            🔒 Complétez les informations des parents pour débloquer
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <div class="section-icon">🪪</div>
+                        <div>
+                            <div class="section-title-text">Parent Inscripteur</div>
+                            <div class="section-subtitle">Qui vient réellement faire l'inscription ?</div>
+                        </div>
+                        <div class="section-status">
+                            <span class="status-dot" id="dot-inscripteur"></span>
+                            <span class="status-text" id="text-inscripteur">En attente</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group parent-subsection">
+                            <label>🧑 Personne qui inscrit l'élève</label>
+                        </div>
+
+                        <div class="inscripteur-choice">
+                            <div class="choice-card" id="choice-PERE" onclick="choisirInscripteur('PERE')">
+                                <span class="choice-check">✓</span>
+                                <span class="choice-icon">👨</span>
+                                <span class="choice-label">Père</span>
+                            </div>
+                            <div class="choice-card" id="choice-MERE" onclick="choisirInscripteur('MERE')">
+                                <span class="choice-check">✓</span>
+                                <span class="choice-icon">👩</span>
+                                <span class="choice-label">Mère</span>
+                            </div>
+                            <div class="choice-card" id="choice-TUTEUR" onclick="choisirInscripteur('TUTEUR')">
+                                <span class="choice-check">✓</span>
+                                <span class="choice-icon">🧑</span>
+                                <span class="choice-label">Tuteur</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="inscripteur_type" value="">
+
+                        <!-- Champs de l'inscripteur (affichés après le choix) -->
+                        <div class="form-group" id="wrap-inscripteur-fields" style="grid-column:1/-1;display:none;">
+                            <div class="form-grid" style="gap:16px;">
+                                <div class="form-group">
+                                    <label for="inscripteur_nom">Nom *</label>
+                                    <input type="text" id="inscripteur_nom" placeholder="Nom de famille" oninput="capitalizeFirst(this); checkSectionInscripteur()" style="text-transform:capitalize;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inscripteur_prenoms">Prénoms *</label>
+                                    <input type="text" id="inscripteur_prenoms" placeholder="Prénom(s)" oninput="capitalizeFirst(this); checkSectionInscripteur()" style="text-transform:capitalize;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inscripteur_contact">Contact téléphone *</label>
+                                    <input type="tel" id="inscripteur_contact" placeholder="Ex: 0123456789" oninput="validateContact(this); checkSectionInscripteur()" inputmode="numeric">
+                                    <span class="input-error-msg" id="error-inscripteur-contact">Seuls les chiffres sont autorisés</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inscripteur_whatsapp">Contact WhatsApp *</label>
+                                    <input type="tel" id="inscripteur_whatsapp" placeholder="Ex: 0123456789" oninput="validateContact(this); checkSectionInscripteur()" inputmode="numeric">
+                                    <span class="input-error-msg" id="error-inscripteur-whatsapp">Seuls les chiffres sont autorisés</span>
+                                    <div class="piece-hint" style="margin-top:6px;">📲 Numéro utilisé pour les communications de l'établissement</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pièce d'identité recto/verso (affichée après le choix) -->
+                        <div class="form-group parent-subsection" id="wrap-piece-title" style="display:none;">
+                            <label>🪪 Pièce d'identité de l'inscripteur</label>
+                        </div>
+                        <div class="piece-grid" id="wrap-piece" style="display:none;">
+                            <div class="piece-box" id="box-recto">
+                                <div class="piece-title">📄 Recto (face avant)</div>
+                                <img class="piece-preview" id="preview-recto" alt="Aperçu recto">
+                                <input type="file" id="file-recto" accept="image/*" capture="environment" style="display:none;" onchange="onPieceSelected(this,'recto')">
+                                <button type="button" class="piece-btn" id="btn-recto" onclick="document.getElementById('file-recto').click()">📷 Prendre la photo</button>
+                                <div class="piece-hint">Recto de la CNI / passeport / attestation</div>
+                            </div>
+                            <div class="piece-box" id="box-verso">
+                                <div class="piece-title">📄 Verso (face arrière)</div>
+                                <img class="piece-preview" id="preview-verso" alt="Aperçu verso">
+                                <input type="file" id="file-verso" accept="image/*" capture="environment" style="display:none;" onchange="onPieceSelected(this,'verso')">
+                                <button type="button" class="piece-btn" id="btn-verso" onclick="document.getElementById('file-verso').click()">📷 Prendre la photo</button>
+                                <div class="piece-hint">Verso de la CNI / passeport / attestation</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- BANDEAU VERROUILLAGE -->
             <div id="verrouillage-banner" class="verrouillage-banner">
                 🔒 Vos informations sont verrouillées. Contactez l'administration pour les modifier.
@@ -1832,8 +2010,13 @@ setInterval(streamVerrouillage, 3000);
 var CHAMPS = [
     'nom','prenoms','sexe','date_naissance','lieu_naissance','nationalite',
     'classe','classe_precedente','statut','qualite','lv2','regime',
-    'nom_pere','prenoms_pere','contact_pere','nom_mere','prenoms_mere','contact_mere'
+    'nom_pere','prenoms_pere','contact_pere','nom_mere','prenoms_mere','contact_mere',
+    'inscripteur_type','inscripteur_nom','inscripteur_prenoms','inscripteur_contact','inscripteur_whatsapp'
 ];
+
+// Photos de la piece d'identite (base64), stockees hors CHAMPS car ce sont des images
+var pieceRectoData = '';
+var pieceVersoData = '';
 
 // Remplit les champs du formulaire avec les données d'un élève, sans toucher
 // à l'affichage des sections (factorisé pour les deux variantes ci-dessous).
@@ -1882,6 +2065,32 @@ function injecterValeursChamps(eleve, verrouille) {
     } else {
         handleClasseChange();
     }
+
+    // Restaurer le choix de l'inscripteur si deja enregistre
+    if (eleve['inscripteur_type']) {
+        var t = eleve['inscripteur_type'];
+        document.getElementById('inscripteur_type').value = t;
+        ['PERE','MERE','TUTEUR'].forEach(function (x) {
+            var c = document.getElementById('choice-' + x);
+            if (c) c.classList.toggle('selected', x === t);
+        });
+        document.getElementById('wrap-inscripteur-fields').style.display = '';
+        document.getElementById('wrap-piece-title').style.display = '';
+        document.getElementById('wrap-piece').style.display = '';
+    }
+    // Restaurer les photos de la piece si presentes
+    ['recto','verso'].forEach(function (side) {
+        var val = eleve['piece_' + side] || '';
+        if (side === 'recto') pieceRectoData = val; else pieceVersoData = val;
+        if (val) {
+            var prev = document.getElementById('preview-' + side);
+            if (prev) { prev.src = val; prev.classList.add('show'); }
+            var box = document.getElementById('box-' + side);
+            if (box) box.classList.add('filled');
+            var btn = document.getElementById('btn-' + side);
+            if (btn) { btn.innerHTML = '\uD83D\uDD04 Reprendre la photo'; btn.classList.add('retake'); }
+        }
+    });
 }
 
 // Cas pré-inscrit/inscrit : remplit les champs et affiche les sections soit
@@ -1909,6 +2118,7 @@ function remplirChampsProgressif(eleve) {
     setTimeout(function () { checkSectionEleve(); }, 100);
     setTimeout(function () { checkSectionScolaire(); }, 900);
     setTimeout(function () { checkSectionParents(); }, 1700);
+    setTimeout(function () { checkSectionInscripteur(); }, 2500);
 }
 
 // Enchaîne l'affichage des 3 sections (Élève → Scolaire → Parents) pour un
@@ -1943,10 +2153,17 @@ function afficherSectionsExistant() {
 
     enchainementTimeouts.push(setTimeout(function () {
         etapeActuelle = 4; updateProgress();
+        afficherSection('section-inscripteur', 'lock-inscripteur');
+        setSectionStatus('inscripteur', 'active');
+        scrollToElement('section-inscripteur');
+    }, 6000));
+
+    enchainementTimeouts.push(setTimeout(function () {
+        etapeActuelle = 5; updateProgress();
         document.getElementById('submit-section').classList.add('show');
         document.getElementById('btn-submit').disabled = false;
         scrollToElement('submit-section');
-    }, 6000));
+    }, 8000));
 }
 
 // Affiche/masque le bandeau de verrouillage et fige/débloque le bouton Finaliser.
@@ -1960,17 +2177,28 @@ function appliquerVerrouillage(verrouille) {
     if (verrouille) {
         sectionsAffichees = true;
         document.getElementById('progress-container').classList.add('show');
-        etapeActuelle = 4; updateProgress();
+        etapeActuelle = 5; updateProgress();
         afficherSection('section-eleve', 'lock-eleve');
         afficherSection('section-scolaire', 'lock-scolaire');
         afficherSection('section-parents', 'lock-parents');
+        afficherSection('section-inscripteur', 'lock-inscripteur');
         setSectionStatus('eleve', 'active');
         setSectionStatus('scolaire', 'active');
         setSectionStatus('parents', 'active');
+        setSectionStatus('inscripteur', 'active');
+        // Verrouiller aussi les cartes de choix
+        ['PERE','MERE','TUTEUR'].forEach(function (t) {
+            var c = document.getElementById('choice-' + t);
+            if (c) c.style.pointerEvents = 'none';
+        });
         banner.classList.add('show');
         submitSection.classList.remove('show');
         btn.disabled = true;
     } else {
+        ['PERE','MERE','TUTEUR'].forEach(function (t) {
+            var c = document.getElementById('choice-' + t);
+            if (c) c.style.pointerEvents = '';
+        });
         banner.classList.remove('show');
         btn.disabled = true; // redevient actif normalement via checkSectionParents()
     }
@@ -1983,6 +2211,23 @@ function viderChamps() {
         el.value = '';
         el.disabled = false;
         el.classList.remove('filled');
+    });
+    // Reset section inscripteur : choix, champs, photos
+    pieceRectoData = ''; pieceVersoData = '';
+    ['PERE','MERE','TUTEUR'].forEach(function (t) {
+        var c = document.getElementById('choice-' + t);
+        if (c) c.classList.remove('selected');
+    });
+    var wf = document.getElementById('wrap-inscripteur-fields'); if (wf) wf.style.display = 'none';
+    var wt = document.getElementById('wrap-piece-title'); if (wt) wt.style.display = 'none';
+    var wp = document.getElementById('wrap-piece'); if (wp) wp.style.display = 'none';
+    ['recto','verso'].forEach(function (side) {
+        var prev = document.getElementById('preview-' + side);
+        if (prev) { prev.src = ''; prev.classList.remove('show'); }
+        var box = document.getElementById('box-' + side);
+        if (box) box.classList.remove('filled');
+        var btn = document.getElementById('btn-' + side);
+        if (btn) { btn.innerHTML = '\uD83D\uDCF7 Prendre la photo'; btn.classList.remove('retake'); }
     });
     handleClasseChange();
     appliquerVerrouillage(false);
@@ -2005,11 +2250,11 @@ function afficherToutesSections() {
 function cacherToutesSections() {
     enchainementTimeouts.forEach(function (t) { clearTimeout(t); });
     enchainementTimeouts = [];
-    ['section-eleve','section-scolaire','section-parents','submit-section'].forEach(function (id) {
+    ['section-eleve','section-scolaire','section-parents','section-inscripteur','submit-section'].forEach(function (id) {
         document.getElementById(id).classList.remove('show');
     });
     document.getElementById('verrouillage-banner').classList.remove('show');
-    ['eleve','scolaire','parents'].forEach(function (s) {
+    ['eleve','scolaire','parents','inscripteur'].forEach(function (s) {
         setSectionStatus(s, '');
         document.getElementById('lock-' + s).classList.add('show');
     });
@@ -2102,14 +2347,124 @@ function checkSectionParents() {
     });
     if (ok) {
         setSectionStatus('parents', 'active');
-        etapeActuelle = 4; updateProgress();
-        document.getElementById('submit-section').classList.add('show');
-        document.getElementById('btn-submit').disabled = false;
-        scrollToElement('submit-section');
+        afficherSectionInscripteur();
+        checkSectionInscripteur();
     } else {
         setSectionStatus('parents', 'pending');
         document.getElementById('btn-submit').disabled = true;
     }
+}
+
+// ============================================================
+//  SECTION PARENT INSCRIPTEUR
+// ============================================================
+function afficherSectionInscripteur() {
+    var dejaVisible = document.getElementById('section-inscripteur').classList.contains('show');
+    if (etapeActuelle < 4) { etapeActuelle = 4; updateProgress(); }
+    afficherSection('section-inscripteur', 'lock-inscripteur');
+    if (!dejaVisible) scrollToElement('section-inscripteur');
+}
+
+// Choix Pere / Mere / Tuteur
+function choisirInscripteur(type) {
+    var prev = document.getElementById('inscripteur_type').value;
+    document.getElementById('inscripteur_type').value = type;
+    ['PERE','MERE','TUTEUR'].forEach(function (t) {
+        document.getElementById('choice-' + t).classList.toggle('selected', t === type);
+    });
+    // Afficher les champs et la capture piece
+    document.getElementById('wrap-inscripteur-fields').style.display = '';
+    document.getElementById('wrap-piece-title').style.display = '';
+    document.getElementById('wrap-piece').style.display = '';
+
+    var nom = document.getElementById('inscripteur_nom');
+    var pre = document.getElementById('inscripteur_prenoms');
+    var con = document.getElementById('inscripteur_contact');
+
+    if (type === 'PERE') {
+        nom.value = document.getElementById('nom_pere').value.trim();
+        pre.value = document.getElementById('prenoms_pere').value.trim();
+        con.value = document.getElementById('contact_pere').value.trim();
+    } else if (type === 'MERE') {
+        nom.value = document.getElementById('nom_mere').value.trim();
+        pre.value = document.getElementById('prenoms_mere').value.trim();
+        con.value = document.getElementById('contact_mere').value.trim();
+    } else {
+        // Tuteur : si on arrive depuis Pere/Mere, on vide les champs auto-remplis
+        // pour une saisie manuelle. Si Tuteur etait deja choisi, on garde la saisie.
+        if (prev === 'PERE' || prev === 'MERE') { nom.value = ''; pre.value = ''; con.value = ''; }
+    }
+    [nom, pre, con].forEach(function (el) { if (el.value) el.classList.add('filled'); else el.classList.remove('filled'); });
+    checkSectionInscripteur();
+    setTimeout(function () { scrollToElement('wrap-inscripteur-fields'); }, 150);
+}
+
+// Verifie que tout est complet -> revele le bouton Finaliser
+function checkSectionInscripteur() {
+    var type = document.getElementById('inscripteur_type').value;
+    var champs = ['inscripteur_nom','inscripteur_prenoms','inscripteur_contact','inscripteur_whatsapp'];
+    var champsOk = type && champs.every(function (c) {
+        var el = document.getElementById(c);
+        var v = el.value.trim();
+        if (c.indexOf('contact') !== -1 || c.indexOf('whatsapp') !== -1) v = v.replace(/\D/g, '');
+        if (v) { el.classList.add('filled'); return true; }
+        el.classList.remove('filled'); return false;
+    });
+    var photosOk = !!pieceRectoData && !!pieceVersoData;
+    var ok = champsOk && photosOk;
+
+    if (ok) {
+        setSectionStatus('inscripteur', 'active');
+        etapeActuelle = 5; updateProgress();
+        document.getElementById('submit-section').classList.add('show');
+        document.getElementById('btn-submit').disabled = false;
+        scrollToElement('submit-section');
+    } else {
+        setSectionStatus('inscripteur', 'pending');
+        document.getElementById('submit-section').classList.remove('show');
+        document.getElementById('btn-submit').disabled = true;
+    }
+}
+
+// ============================================================
+//  CAPTURE / COMPRESSION PIECE D'IDENTITE
+// ============================================================
+function onPieceSelected(input, side) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    compresserImage(file, function (dataUrl) {
+        if (side === 'recto') pieceRectoData = dataUrl; else pieceVersoData = dataUrl;
+        var prev = document.getElementById('preview-' + side);
+        prev.src = dataUrl; prev.classList.add('show');
+        document.getElementById('box-' + side).classList.add('filled');
+        var btn = document.getElementById('btn-' + side);
+        btn.innerHTML = '\uD83D\uDD04 Reprendre la photo';
+        btn.classList.add('retake');
+        checkSectionInscripteur();
+    });
+    input.value = ''; // permet de reprendre la meme photo
+}
+
+// Redimensionne + compresse en JPEG pour alleger l'envoi (~1000px max, qualite 0.7)
+function compresserImage(file, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+            var maxDim = 1000;
+            var w = img.width, h = img.height;
+            if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+            else if (h >= w && h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            callback(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
 // ============================================================
@@ -2290,6 +2645,9 @@ async function soumettreInscription() {
     });
     data.matricule = document.getElementById('matricule').value.toUpperCase().trim();
     if (!data.lv2) data.lv2 = 'N/A';
+    // Photos de la piece d'identite (base64)
+    data.piece_recto = pieceRectoData || '';
+    data.piece_verso = pieceVersoData || '';
 
     try {
         var resp = await fetch(API_URL + '/api/eleves/inscrire', {
@@ -2365,7 +2723,7 @@ function showNotification(type, message) {
 }
 
 function updateProgress() {
-    var pcts = [0, 25, 50, 75, 100];
+    var pcts = [0, 20, 40, 60, 80, 100];
     document.getElementById('progress-fill').style.width = pcts[etapeActuelle] + '%';
     document.getElementById('progress-text').textContent = pcts[etapeActuelle] + '%';
 }
