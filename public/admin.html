@@ -1947,10 +1947,12 @@ function sortTable(column) {
 }
 
 // ===== VIEW / EDITION / VALIDATION =====
-function viewInscription(matricule) {
+async function viewInscription(matricule) {
     currentViewMatricule = matricule;
     const item = inscriptions.find(i => i.matricule === matricule);
     if (!item) return;
+
+    const inscTypeLabel = { PERE: '👨 Père', MERE: '👩 Mère', TUTEUR: '🧑 Tuteur' }[item.inscripteur_type] || '— Non renseigné';
 
     const estValide = !!item.date_inscription;
     const titre = estValide ? '✅ Détail de l\'Élève (Inscrit)' : '📋 Pré-inscription — En attente de validation';
@@ -2082,8 +2084,33 @@ function viewInscription(matricule) {
                 <div class="form-group"><label>Contact</label><input class="form-input-edit" id="edit-contact_mere" value="${escHtml(item.contact_mere||'')}"></div>
             </div>
         </div>
+
+        <div class="detail-section">
+            <div class="detail-section-title">🪪 Parent Inscripteur (personne venue inscrire)</div>
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:20px;background:linear-gradient(145deg,#fff4f6,#ffe1e8);border:1.5px solid #800020;color:#800020;font-weight:700;font-size:0.9em;margin-bottom:14px;">
+                ${inscTypeLabel}
+            </div>
+            <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group"><label>Nom</label><input class="form-input-edit" value="${escHtml(item.inscripteur_nom||'')}" readonly style="background:#f7f4f2;"></div>
+                <div class="form-group"><label>Prénoms</label><input class="form-input-edit" value="${escHtml(item.inscripteur_prenoms||'')}" readonly style="background:#f7f4f2;"></div>
+                <div class="form-group"><label>Contact téléphone</label><input class="form-input-edit" value="${escHtml(item.inscripteur_contact||'')}" readonly style="background:#f7f4f2;"></div>
+                <div class="form-group"><label>Contact WhatsApp</label><input class="form-input-edit" value="${escHtml(item.inscripteur_whatsapp||'')}" readonly style="background:#f7f4f2;"></div>
+            </div>
+            <div style="margin-top:14px;font-weight:600;color:#5a4a42;font-size:0.86em;">🪪 Pièce d'identité de l'inscripteur</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px;" id="view-pieces-wrap">
+                <div style="text-align:center;">
+                    <div style="font-size:0.8em;color:#a09088;margin-bottom:6px;font-weight:600;">Recto</div>
+                    <div id="view-piece-recto-slot" style="border:1.5px dashed #cbb8bc;border-radius:12px;padding:14px;color:#a09088;font-size:0.82em;background:#faf8f6;">⏳ Chargement...</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:0.8em;color:#a09088;margin-bottom:6px;font-weight:600;">Verso</div>
+                    <div id="view-piece-verso-slot" style="border:1.5px dashed #cbb8bc;border-radius:12px;padding:14px;color:#a09088;font-size:0.82em;background:#faf8f6;">⏳ Chargement...</div>
+                </div>
+            </div>
+        </div>
     `;
     openModal('modal-view');
+    chargerPiecesIdentite(matricule);
 
     // Côté utilisateur simple : initialiser le badge qualité et les suggestions de classe
     if (adminRole !== 'admin') {
@@ -2103,6 +2130,54 @@ function escHtml(s) {
     return String(s == null ? '' : s)
         .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
         .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Charge les photos de la piece d'identite a la demande (elles ne sont PAS
+// dans la liste pour ne pas l'alourdir). Recupere l'eleve complet via son
+// matricule puis remplit les emplacements recto/verso.
+async function chargerPiecesIdentite(matricule) {
+    const slotR = document.getElementById('view-piece-recto-slot');
+    const slotV = document.getElementById('view-piece-verso-slot');
+    try {
+        const resp = await fetch(API_URL + '/eleves/' + encodeURIComponent(matricule), {
+            headers: { 'Authorization': adminToken }
+        });
+        if (!resp.ok) throw new Error('err');
+        const full = await resp.json();
+        remplirSlotPiece(slotR, full.piece_recto, 'Recto pi\u00e8ce d\'identit\u00e9');
+        remplirSlotPiece(slotV, full.piece_verso, 'Verso pi\u00e8ce d\'identit\u00e9');
+    } catch (e) {
+        if (slotR) slotR.innerHTML = '\u274c Erreur de chargement';
+        if (slotV) slotV.innerHTML = '\u274c Erreur de chargement';
+    }
+}
+
+function remplirSlotPiece(slot, dataUrl, alt) {
+    if (!slot) return;
+    if (dataUrl && dataUrl.length > 0) {
+        slot.style.border = '1.5px solid #2e7d32';
+        slot.style.padding = '6px';
+        slot.style.background = '#fff';
+        slot.innerHTML = '<img src="' + dataUrl + '" alt="' + alt + '" ' +
+            'style="width:100%;max-height:170px;object-fit:contain;border-radius:8px;cursor:zoom-in;" ' +
+            'onclick="ouvrirImagePleinEcran(this.src)">' +
+            '<div style="font-size:0.72em;color:#2e7d32;margin-top:5px;font-weight:600;">\uD83D\uDD0d Cliquer pour agrandir</div>';
+    } else {
+        slot.innerHTML = '\uD83D\uDCed Aucune photo fournie';
+    }
+}
+
+// Affiche une image en plein ecran (lightbox) — cree a la volee.
+function ouvrirImagePleinEcran(src) {
+    const ov = document.createElement('div');
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.9);' +
+        'display:flex;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;';
+    ov.onclick = function () { document.body.removeChild(ov); };
+    const img = document.createElement('img');
+    img.src = src;
+    img.style.cssText = 'max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.5);';
+    ov.appendChild(img);
+    document.body.appendChild(ov);
 }
 
 // Récupère toutes les données du formulaire d'édition
