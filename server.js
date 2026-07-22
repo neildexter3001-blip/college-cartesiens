@@ -82,11 +82,6 @@ const initDB = async () => {
             ALTER TABLE eleves ADD COLUMN IF NOT EXISTS valide_par VARCHAR(150)
         `);
 
-        // Migration : max_eleves par classe individuelle (NULL = utiliser le max du niveau)
-        await pool.query(`
-            ALTER TABLE classes ADD COLUMN IF NOT EXISTS max_eleves INTEGER
-        `);
-
         // Table des max par niveau (un seul enregistrement par niveau)
         await pool.query(`
             CREATE TABLE IF NOT EXISTS niveaux_config (
@@ -109,6 +104,15 @@ const initDB = async () => {
                 date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(niveau, numero)
             )
+        `);
+
+        // Migration : max_eleves par classe individuelle (NULL = utiliser le max du niveau)
+        // IMPORTANT : cette ligne doit rester APRÈS le CREATE TABLE classes ci-dessus,
+        // sinon sur une base neuve (table "classes" pas encore créée) ce ALTER TABLE
+        // échoue avec "relation classes does not exist", ce qui interrompt tout le
+        // reste de initDB() (niveaux_config, classes, users ne seraient alors jamais créées).
+        await pool.query(`
+            ALTER TABLE classes ADD COLUMN IF NOT EXISTS max_eleves INTEGER
         `);
 
         // Comptes utilisateurs autorisés à se connecter à l'espace admin.
