@@ -82,6 +82,16 @@ const initDB = async () => {
             ALTER TABLE eleves ADD COLUMN IF NOT EXISTS valide_par VARCHAR(150)
         `);
 
+        // Migration : parent inscripteur (qui vient reellement faire l'inscription)
+        // et photos de sa piece d'identite (recto/verso, stockees en base64 -> TEXT).
+        await pool.query(`ALTER TABLE eleves ADD COLUMN IF NOT EXISTS inscripteur_type VARCHAR(10)`);
+        await pool.query(`ALTER TABLE eleves ADD COLUMN IF NOT EXISTS inscripteur_nom VARCHAR(100)`);
+        await pool.query(`ALTER TABLE eleves ADD COLUMN IF NOT EXISTS inscripteur_prenoms VARCHAR(200)`);
+        await pool.query(`ALTER TABLE eleves ADD COLUMN IF NOT EXISTS inscripteur_contact VARCHAR(20)`);
+        await pool.query(`ALTER TABLE eleves ADD COLUMN IF NOT EXISTS inscripteur_whatsapp VARCHAR(20)`);
+        await pool.query(`ALTER TABLE eleves ADD COLUMN IF NOT EXISTS piece_recto TEXT`);
+        await pool.query(`ALTER TABLE eleves ADD COLUMN IF NOT EXISTS piece_verso TEXT`);
+
         // Table des max par niveau (un seul enregistrement par niveau)
         await pool.query(`
             CREATE TABLE IF NOT EXISTS niveaux_config (
@@ -372,7 +382,7 @@ app.get('/api/keepalive', (req, res) => {
 app.get('/api/eleves', requireAuth, async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT * FROM eleves ORDER BY date_creation DESC'
+            'SELECT id, matricule, nom, prenoms, sexe, date_naissance, lieu_naissance, nationalite, classe, classe_precedente, statut, qualite, lv2, regime, nom_pere, prenoms_pere, contact_pere, nom_mere, prenoms_mere, contact_mere, bloque, date_creation, date_inscription, date_preinscription, valide_par, inscripteur_type, inscripteur_nom, inscripteur_prenoms, inscripteur_contact, inscripteur_whatsapp, (piece_recto IS NOT NULL AND length(piece_recto) > 0) AS has_recto, (piece_verso IS NOT NULL AND length(piece_verso) > 0) AS has_verso FROM eleves ORDER BY date_creation DESC'
         );
         res.json(result.rows);
     } catch (err) {
@@ -608,8 +618,11 @@ app.post('/api/eleves/inscrire', async (req, res) => {
             (matricule, nom, prenoms, sexe, date_naissance, lieu_naissance, nationalite,
              classe, classe_precedente, statut, qualite, lv2, regime,
              nom_pere, prenoms_pere, contact_pere, nom_mere, prenoms_mere, contact_mere,
+             inscripteur_type, inscripteur_nom, inscripteur_prenoms, inscripteur_contact, inscripteur_whatsapp,
+             piece_recto, piece_verso,
              date_preinscription, bloque)
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,NOW(),TRUE)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,
+                    $20,$21,$22,$23,$24,$25,$26,NOW(),TRUE)
             ON CONFLICT (matricule) DO UPDATE SET
                 nom = EXCLUDED.nom, prenoms = EXCLUDED.prenoms, sexe = EXCLUDED.sexe,
                 date_naissance = EXCLUDED.date_naissance, lieu_naissance = EXCLUDED.lieu_naissance,
@@ -620,6 +633,13 @@ app.post('/api/eleves/inscrire', async (req, res) => {
                 prenoms_pere = EXCLUDED.prenoms_pere, contact_pere = EXCLUDED.contact_pere,
                 nom_mere = EXCLUDED.nom_mere, prenoms_mere = EXCLUDED.prenoms_mere,
                 contact_mere = EXCLUDED.contact_mere,
+                inscripteur_type = EXCLUDED.inscripteur_type,
+                inscripteur_nom = EXCLUDED.inscripteur_nom,
+                inscripteur_prenoms = EXCLUDED.inscripteur_prenoms,
+                inscripteur_contact = EXCLUDED.inscripteur_contact,
+                inscripteur_whatsapp = EXCLUDED.inscripteur_whatsapp,
+                piece_recto = EXCLUDED.piece_recto,
+                piece_verso = EXCLUDED.piece_verso,
                 date_preinscription = NOW(),
                 bloque = TRUE
             RETURNING *
@@ -627,7 +647,10 @@ app.post('/api/eleves/inscrire', async (req, res) => {
             matricule, data.nom, data.prenoms, data.sexe, data.date_naissance,
             data.lieu_naissance, data.nationalite, data.classe, data.classe_precedente,
             data.statut, data.qualite, data.lv2 || 'N/A', data.regime, data.nom_pere, data.prenoms_pere,
-            data.contact_pere, data.nom_mere, data.prenoms_mere, data.contact_mere
+            data.contact_pere, data.nom_mere, data.prenoms_mere, data.contact_mere,
+            data.inscripteur_type || null, data.inscripteur_nom || null, data.inscripteur_prenoms || null,
+            data.inscripteur_contact || null, data.inscripteur_whatsapp || null,
+            data.piece_recto || null, data.piece_verso || null
         ]);
         
         res.json({ message: 'Inscription validée', eleve: result.rows[0] });
@@ -799,7 +822,7 @@ function csvEscape(value) {
 // GET - Exporter CSV (admin)
 app.get('/api/eleves/export/csv', requireAuth, async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM eleves ORDER BY date_creation DESC');
+        const result = await pool.query('SELECT id, matricule, nom, prenoms, sexe, date_naissance, lieu_naissance, nationalite, classe, classe_precedente, statut, qualite, lv2, regime, nom_pere, prenoms_pere, contact_pere, nom_mere, prenoms_mere, contact_mere, bloque, date_creation, date_inscription, date_preinscription, valide_par, inscripteur_type, inscripteur_nom, inscripteur_prenoms, inscripteur_contact, inscripteur_whatsapp, (piece_recto IS NOT NULL AND length(piece_recto) > 0) AS has_recto, (piece_verso IS NOT NULL AND length(piece_verso) > 0) AS has_verso FROM eleves ORDER BY date_creation DESC');
         const eleves = result.rows;
 
         const headers = [
