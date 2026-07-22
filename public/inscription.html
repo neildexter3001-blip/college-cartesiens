@@ -808,52 +808,94 @@
             font-family: Arial, Helvetica, sans-serif;
         }
 
-        /* ===== PARENT INSCRIPTEUR : CHOIX QUI INSCRIT ===== */
+        /* ===== PARENT INSCRIPTEUR : CHOIX QUI INSCRIT (design pro) ===== */
         .inscripteur-choice {
             grid-column: 1 / -1;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 6px;
+            gap: 14px;
+            margin: 4px 0 12px;
         }
         .choice-card {
             position: relative;
-            border: 2px solid #e0d5d8;
-            border-radius: 14px;
-            padding: 16px 10px;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 22px 14px 18px;
+            border: 2px solid #ece2e5;
+            border-radius: 18px;
+            background: #ffffff;
             cursor: pointer;
-            background: linear-gradient(145deg, #faf8f6, #f0ece8);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             user-select: none;
+            box-shadow: 0 1px 2px rgba(74, 0, 18, 0.04);
+            transition: transform .22s cubic-bezier(.16,1,.3,1), border-color .22s ease, box-shadow .22s ease, background .22s ease;
+            outline: none;
         }
         .choice-card:hover {
-            border-color: #d4af37;
-            transform: translateY(-2px);
-            box-shadow: 4px 6px 14px rgba(128, 0, 32, 0.08);
+            border-color: #d8bfc6;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(128, 0, 32, 0.10);
         }
-        .choice-card .choice-icon { font-size: 2em; display: block; margin-bottom: 6px; }
-        .choice-card .choice-label { font-weight: 700; color: #5a4a42; font-size: 0.95em; }
-        .choice-card .choice-check {
-            position: absolute; top: 8px; right: 8px;
-            width: 22px; height: 22px; border-radius: 50%;
-            border: 2px solid #cbb8bc; background: #fff;
+        .choice-card:active { transform: translateY(-1px); }
+        .choice-card:focus-visible { border-color: #800020; box-shadow: 0 0 0 3px rgba(128,0,32,.18); }
+
+        /* Pastille icone */
+        .choice-avatar {
+            width: 54px; height: 54px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.8em; color: transparent; transition: all 0.2s;
+            font-size: 1.7em; line-height: 1;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #f7f0f2, #efe4e8);
+            box-shadow: inset 0 0 0 1px rgba(128, 0, 32, 0.05);
+            margin-bottom: 8px;
+            transition: transform .22s ease, background .22s ease, box-shadow .22s ease;
         }
+        .choice-card:hover .choice-avatar { transform: scale(1.06); }
+
+        .choice-text { display: flex; flex-direction: column; align-items: center; }
+        .choice-label { font-weight: 700; color: #3d2b26; font-size: 1em; letter-spacing: .2px; }
+        .choice-sub { font-size: .72em; color: #a89a94; font-weight: 500; margin-top: 1px; }
+
+        /* Indicateur radio (coin haut droit) */
+        .choice-radio {
+            position: absolute; top: 12px; right: 12px;
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid #dccace; background: #fff;
+            transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+        .choice-radio::after {
+            content: ""; position: absolute;
+            left: 6px; top: 2.5px; width: 4px; height: 9px;
+            border: solid #fff; border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg) scale(0);
+            transition: transform .2s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        /* Etat selectionne */
         .choice-card.selected {
             border-color: #800020;
-            background: linear-gradient(145deg, #fff4f6, #ffe8ec);
-            box-shadow: 4px 6px 16px rgba(128, 0, 32, 0.15);
+            background: linear-gradient(160deg, #fff8f9, #fdeef1);
+            box-shadow: 0 8px 24px rgba(128, 0, 32, 0.16);
         }
         .choice-card.selected .choice-label { color: #800020; }
-        .choice-card.selected .choice-check {
-            border-color: #800020; background: #800020; color: #fff;
+        .choice-card.selected .choice-avatar {
+            background: linear-gradient(145deg, #fdeef1, #f8dfe5);
+            box-shadow: inset 0 0 0 1.5px rgba(128, 0, 32, 0.25), 0 3px 10px rgba(128, 0, 32, 0.10);
         }
+        .choice-card.selected .choice-radio {
+            border-color: #800020; background: #800020;
+            box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.12);
+        }
+        .choice-card.selected .choice-radio::after { transform: rotate(45deg) scale(1); }
+
         @media (max-width: 560px) {
-            .inscripteur-choice { grid-template-columns: 1fr; }
-            .choice-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; text-align: left; }
-            .choice-card .choice-icon { margin-bottom: 0; font-size: 1.6em; }
+            .inscripteur-choice { grid-template-columns: 1fr; gap: 10px; }
+            .choice-card { flex-direction: row; align-items: center; text-align: left; gap: 14px; padding: 14px 16px 14px 16px; }
+            .choice-avatar { margin-bottom: 0; width: 46px; height: 46px; font-size: 1.5em; }
+            .choice-text { align-items: flex-start; }
+            .choice-radio { top: 50%; transform: translateY(-50%); }
+            .choice-card.selected .choice-radio { transform: translateY(-50%); }
         }
 
         /* ===== CAPTURE PIECE D'IDENTITE ===== */
@@ -1586,21 +1628,30 @@
                             <label>🧑 Personne qui inscrit l'élève</label>
                         </div>
 
-                        <div class="inscripteur-choice">
-                            <div class="choice-card" id="choice-PERE" onclick="choisirInscripteur('PERE')">
-                                <span class="choice-check">✓</span>
-                                <span class="choice-icon">👨</span>
-                                <span class="choice-label">Père</span>
+                        <div class="inscripteur-choice" role="radiogroup" aria-label="Personne qui inscrit l'élève">
+                            <div class="choice-card" id="choice-PERE" role="radio" aria-checked="false" tabindex="0" onclick="choisirInscripteur('PERE')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();choisirInscripteur('PERE');}">
+                                <span class="choice-radio"></span>
+                                <span class="choice-avatar">👨</span>
+                                <span class="choice-text">
+                                    <span class="choice-label">Père</span>
+                                    <span class="choice-sub">Père de l'élève</span>
+                                </span>
                             </div>
-                            <div class="choice-card" id="choice-MERE" onclick="choisirInscripteur('MERE')">
-                                <span class="choice-check">✓</span>
-                                <span class="choice-icon">👩</span>
-                                <span class="choice-label">Mère</span>
+                            <div class="choice-card" id="choice-MERE" role="radio" aria-checked="false" tabindex="0" onclick="choisirInscripteur('MERE')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();choisirInscripteur('MERE');}">
+                                <span class="choice-radio"></span>
+                                <span class="choice-avatar">👩</span>
+                                <span class="choice-text">
+                                    <span class="choice-label">Mère</span>
+                                    <span class="choice-sub">Mère de l'élève</span>
+                                </span>
                             </div>
-                            <div class="choice-card" id="choice-TUTEUR" onclick="choisirInscripteur('TUTEUR')">
-                                <span class="choice-check">✓</span>
-                                <span class="choice-icon">🧑</span>
-                                <span class="choice-label">Tuteur</span>
+                            <div class="choice-card" id="choice-TUTEUR" role="radio" aria-checked="false" tabindex="0" onclick="choisirInscripteur('TUTEUR')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();choisirInscripteur('TUTEUR');}">
+                                <span class="choice-radio"></span>
+                                <span class="choice-avatar">🧑</span>
+                                <span class="choice-text">
+                                    <span class="choice-label">Tuteur</span>
+                                    <span class="choice-sub">Autre responsable</span>
+                                </span>
                             </div>
                         </div>
                         <input type="hidden" id="inscripteur_type" value="">
@@ -2370,7 +2421,9 @@ function choisirInscripteur(type) {
     var prev = document.getElementById('inscripteur_type').value;
     document.getElementById('inscripteur_type').value = type;
     ['PERE','MERE','TUTEUR'].forEach(function (t) {
-        document.getElementById('choice-' + t).classList.toggle('selected', t === type);
+        var c = document.getElementById('choice-' + t);
+        c.classList.toggle('selected', t === type);
+        c.setAttribute('aria-checked', t === type ? 'true' : 'false');
     });
     // Afficher les champs et la capture piece
     document.getElementById('wrap-inscripteur-fields').style.display = '';
