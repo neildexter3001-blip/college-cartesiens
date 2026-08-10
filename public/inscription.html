@@ -1336,6 +1336,7 @@
         .scan-btn { border: none; border-radius: 12px; padding: 14px 24px; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
         .scan-btn.valider { background: #2e8b57; color: #fff; }
         .scan-btn.reprendre { background: #6c584c; color: #fff; }
+        .scan-btn.tout { background: #8a6d3b; color: #fff; }
         .scan-hint2 { color: #e6ddd4; font-size: 0.78em; margin-top: 12px; text-align: center; max-width: 420px; }
     </style>
 </head>
@@ -1699,7 +1700,7 @@
                         <!-- Pièce d'identité recto/verso (affichée après le choix) -->
                         <div class="form-group parent-subsection" id="wrap-piece-title" style="display:none;">
                             <label>🪪 Pièce d'identité de l'inscripteur</label>
-                            <div class="piece-hint" style="margin-top:4px;">📄 Cadre ajustable + redressement et amélioration automatiques (comme un scanner pro)</div>
+                            <div class="piece-hint" style="margin-top:4px;">📄 Détection automatique des bords + redressement et amélioration (scanner pro)</div>
                         </div>
                         <div class="piece-grid" id="wrap-piece" style="display:none;">
                             <div class="piece-box" id="box-recto">
@@ -2499,9 +2500,10 @@ function checkSectionInscripteur() {
 //  CAPTURE / COMPRESSION PIECE D'IDENTITE
 // ============================================================
 // ============================================================
-//  SCANNER DE DOCUMENT — recadrage ajustable facon CamScanner
-//  100% dans le navigateur (aucun telechargement, hors-ligne) :
-//  cadre a 4 coins ajustables -> redressement perspective -> nettete/contraste
+//  SCANNER DE DOCUMENT — detection AUTO des bords + recadrage
+//  100% navigateur (aucun telechargement, hors-ligne) :
+//  detection auto du document -> cadre ajustable -> redressement
+//  perspective -> aplatissement lumiere + contraste + nettete
 // ============================================================
 
 var _scan = { side: null, img: null, dispW: 0, dispH: 0, corners: null, drag: null };
@@ -2509,7 +2511,7 @@ var _scanBound = false;
 
 function onPieceSelected(input, side) {
     var file = input.files && input.files[0];
-    input.value = ''; // permet de reprendre la meme photo
+    input.value = '';
     if (!file) return;
     var reader = new FileReader();
     reader.onload = function (e) { ouvrirScanner(side, e.target.result); };
@@ -2527,12 +2529,19 @@ function ouvrirScanner(side, dataUrl) {
         _scan.dispW = dw; _scan.dispH = dh;
         var svg = document.getElementById('scan-svg');
         svg.setAttribute('viewBox', '0 0 ' + dw + ' ' + dh);
+        // Cadre par defaut (au cas ou la detection echoue)
         var mx = dw * 0.06, my = dh * 0.06;
         _scan.corners = {
             tl: { x: mx, y: my }, tr: { x: dw - mx, y: my },
             br: { x: dw - mx, y: dh - my }, bl: { x: mx, y: dh - my }
         };
+        // DETECTION AUTOMATIQUE des bords de la piece
+        var auto = null;
+        try { auto = detectDocument(im, dw, dh); } catch (e) { auto = null; }
+        if (auto) _scan.corners = auto;
         renderScan();
+        var st = document.getElementById('scan-status');
+        if (st) st.textContent = auto ? '✓ Bords détectés automatiquement — ajuste si besoin.' : 'Place les 4 coins sur les bords de la pièce.';
     };
     im.src = dataUrl;
     ov.classList.add('show');
@@ -2540,19 +2549,185 @@ function ouvrirScanner(side, dataUrl) {
     bindScan();
 }
 
+// ---------- DETECTION AUTOMATIQUE DU DOCUMENT ----------
+function detectDocument(img, dispW, dispH) {
+    var W = 500;
+    var nW = img.naturalWidth, nH = img.naturalHeight;
+    if (!nW || !nH) return null;
+    var sc = W / nW, w = W, h = Math.round(nH * sc);
+    if (h < 40) return null;
+    var cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h;
+    var ctx = cvs.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+    var data = ctx.getImageData(0, 0, w, h).data;
+    var gray = new Float32Array(w * h);
+    for (var i = 0, p = 0; i < w * h; i++, p += 4) gray[i] = 0.299 * data[p] + 0.587 * data[p + 1] + 0.114 * data[p + 2];
+    gray = boxBlur(gray, w, h, 2);
+    var gx = new Float32Array(w * h), gy = new Float32Array(w * h);
+    var colE = new Float32Array(w), rowE = new Float32Array(h);
+    for (var y = 1; y < h - 1; y++) {
+        for (var x = 1; x < w - 1; x++) {
+            var o = y * w + x;
+            var a = gray[o - w - 1], b = gray[o - w], c = gray[o - w + 1];
+            var e = gray[o - 1], f = gray[o + 1];
+            var g = gray[o + w - 1], hh = gray[o + w], ii = gray[o + w + 1];
+            var sx = (c + 2 * f + ii) - (a + 2 * e + g);
+            var sy = (g + 2 * hh + ii) - (a + 2 * b + c);
+            gx[o] = sx; gy[o] = sy;
+            colE[x] += Math.abs(sx); rowE[y] += Math.abs(sy);
+        }
+    }
+    var vx = twoPeaks(colE, Math.round(w * 0.18));
+    var hy = twoPeaks(rowE, Math.round(h * 0.18));
+    if (!vx || !hy) return null;
+    var leftX = vx[0], rightX = vx[1], topY = hy[0], botY = hy[1];
+    // Boite alignee (base)
+    var box = [{ x: leftX, y: topY }, { x: rightX, y: topY }, { x: rightX, y: botY }, { x: leftX, y: botY }];
+    if (!validQuad(box, w, h)) return null;
+    // Affinage en quadrilatere (gere une legere rotation/perspective)
+    var quad = box;
+    try {
+        var L = fitVertical(gx, w, h, leftX, topY, botY);
+        var R = fitVertical(gx, w, h, rightX, topY, botY);
+        var T = fitHorizontal(gy, w, h, topY, leftX, rightX);
+        var B = fitHorizontal(gy, w, h, botY, leftX, rightX);
+        var tl = interVH(L, T), tr = interVH(R, T), br = interVH(R, B), bl = interVH(L, B);
+        var refined = [tl, tr, br, bl];
+        var tol = Math.max(w, h) * 0.14;
+        if (validQuad(refined, w, h) && closeTo(refined, box, tol)) quad = refined;
+    } catch (e) { quad = box; }
+    var kx = dispW / w, ky = dispH / h;
+    return {
+        tl: { x: quad[0].x * kx, y: quad[0].y * ky },
+        tr: { x: quad[1].x * kx, y: quad[1].y * ky },
+        br: { x: quad[2].x * kx, y: quad[2].y * ky },
+        bl: { x: quad[3].x * kx, y: quad[3].y * ky }
+    };
+}
+
+function boxBlur(src, w, h, r) {
+    var tmp = new Float32Array(w * h), out = new Float32Array(w * h), i, x, y, s, n;
+    for (y = 0; y < h; y++) {
+        s = 0; n = 0;
+        for (x = -r; x <= r; x++) { var xi = Math.min(w - 1, Math.max(0, x)); s += src[y * w + xi]; n++; }
+        for (x = 0; x < w; x++) {
+            tmp[y * w + x] = s / n;
+            var xout = x - r, xin = x + r + 1;
+            s -= src[y * w + Math.min(w - 1, Math.max(0, xout))];
+            s += src[y * w + Math.min(w - 1, Math.max(0, xin))];
+        }
+    }
+    for (x = 0; x < w; x++) {
+        s = 0; n = 0;
+        for (y = -r; y <= r; y++) { var yi = Math.min(h - 1, Math.max(0, y)); s += tmp[yi * w + x]; n++; }
+        for (y = 0; y < h; y++) {
+            out[y * w + x] = s / n;
+            var yout = y - r, yin = y + r + 1;
+            s -= tmp[Math.min(h - 1, Math.max(0, yout)) * w + x];
+            s += tmp[Math.min(h - 1, Math.max(0, yin)) * w + x];
+        }
+    }
+    return out;
+}
+
+function twoPeaks(arr, minSep) {
+    var n = arr.length, cands = [], i;
+    for (i = 2; i < n - 2; i++) { if (arr[i] >= arr[i - 1] && arr[i] >= arr[i + 1]) cands.push(i); }
+    if (cands.length < 2) return null;
+    cands.sort(function (a, b) { return arr[b] - arr[a]; });
+    var first = cands[0], second = -1;
+    for (i = 1; i < cands.length; i++) { if (Math.abs(cands[i] - first) >= minSep) { second = cands[i]; break; } }
+    if (second < 0) return null;
+    return [Math.min(first, second), Math.max(first, second)];
+}
+
+// Ajuste une droite quasi-verticale x = a*y + b autour de la colonne cx
+function fitVertical(gx, w, h, cx, y0, y1) {
+    var band = Math.max(6, Math.round(w * 0.05));
+    var sy = 0, syy = 0, sx = 0, sxy = 0, n = 0;
+    for (var y = y0; y <= y1; y++) {
+        var best = 0, bestX = -1;
+        for (var x = cx - band; x <= cx + band; x++) {
+            if (x < 1 || x >= w - 1) continue;
+            var v = Math.abs(gx[y * w + x]);
+            if (v > best) { best = v; bestX = x; }
+        }
+        if (bestX >= 0 && best > 28) { sy += y; syy += y * y; sx += bestX; sxy += bestX * y; n++; }
+    }
+    if (n < 8) return { a: 0, b: cx };
+    var den = n * syy - sy * sy;
+    if (Math.abs(den) < 1e-6) return { a: 0, b: cx };
+    var a = (n * sxy - sy * sx) / den;
+    var b = (sx - a * sy) / n;
+    if (Math.abs(a) > 0.6) return { a: 0, b: cx };
+    return { a: a, b: b };
+}
+
+// Ajuste une droite quasi-horizontale y = c*x + e autour de la ligne cy
+function fitHorizontal(gy, w, h, cy, x0, x1) {
+    var band = Math.max(6, Math.round(h * 0.05));
+    var sx = 0, sxx = 0, sy = 0, sxy = 0, n = 0;
+    for (var x = x0; x <= x1; x++) {
+        var best = 0, bestY = -1;
+        for (var y = cy - band; y <= cy + band; y++) {
+            if (y < 1 || y >= h - 1) continue;
+            var v = Math.abs(gy[y * w + x]);
+            if (v > best) { best = v; bestY = y; }
+        }
+        if (bestY >= 0 && best > 28) { sx += x; sxx += x * x; sy += bestY; sxy += bestY * x; n++; }
+    }
+    if (n < 8) return { c: 0, e: cy };
+    var den = n * sxx - sx * sx;
+    if (Math.abs(den) < 1e-6) return { c: 0, e: cy };
+    var c = (n * sxy - sx * sy) / den;
+    var e = (sy - c * sx) / n;
+    if (Math.abs(c) > 0.6) return { c: 0, e: cy };
+    return { c: c, e: e };
+}
+
+// Intersection d'une droite verticale (x=a*y+b) et horizontale (y=c*x+e)
+function interVH(V, H) {
+    var den = 1 - V.a * H.c;
+    if (Math.abs(den) < 1e-6) return { x: V.b, y: H.e };
+    var x = (V.a * H.e + V.b) / den;
+    var y = H.c * x + H.e;
+    return { x: x, y: y };
+}
+
+function polyArea(q) {
+    var s = 0;
+    for (var i = 0; i < q.length; i++) { var j = (i + 1) % q.length; s += q[i].x * q[j].y - q[j].x * q[i].y; }
+    return Math.abs(s) / 2;
+}
+function validQuad(q, w, h) {
+    for (var i = 0; i < 4; i++) {
+        if (!isFinite(q[i].x) || !isFinite(q[i].y)) return false;
+        if (q[i].x < -w * 0.12 || q[i].x > w * 1.12) return false;
+        if (q[i].y < -h * 0.12 || q[i].y > h * 1.12) return false;
+    }
+    var r = polyArea(q) / (w * h);
+    if (r < 0.12 || r > 0.985) return false;
+    return true;
+}
+function closeTo(q, ref, tol) {
+    for (var i = 0; i < 4; i++) {
+        if (Math.hypot(q[i].x - ref[i].x, q[i].y - ref[i].y) > tol) return false;
+    }
+    return true;
+}
+
+// ---------- CADRE AJUSTABLE ----------
 function renderScan() {
     if (!_scan.corners) return;
     var c = _scan.corners;
     var poly = document.getElementById('scan-poly');
     poly.setAttribute('points', c.tl.x + ',' + c.tl.y + ' ' + c.tr.x + ',' + c.tr.y + ' ' + c.br.x + ',' + c.br.y + ' ' + c.bl.x + ',' + c.bl.y);
     ['tl', 'tr', 'br', 'bl'].forEach(function (k) {
-        var h = document.getElementById('h-' + k);
+        var hh = document.getElementById('h-' + k);
         var hit = document.getElementById('hit-' + k);
-        h.setAttribute('cx', c[k].x); h.setAttribute('cy', c[k].y);
+        hh.setAttribute('cx', c[k].x); hh.setAttribute('cy', c[k].y);
         hit.setAttribute('cx', c[k].x); hit.setAttribute('cy', c[k].y);
     });
 }
-
 function bindScan() {
     if (_scanBound) return; _scanBound = true;
     document.addEventListener('pointermove', scanMove, { passive: false });
@@ -2572,23 +2747,28 @@ function scanMove(ev) {
     renderScan();
 }
 function scanUp() { _scan.drag = null; }
-
+function scanTout() {
+    var dw = _scan.dispW, dh = _scan.dispH, m = 0.02;
+    _scan.corners = {
+        tl: { x: dw * m, y: dh * m }, tr: { x: dw * (1 - m), y: dh * m },
+        br: { x: dw * (1 - m), y: dh * (1 - m) }, bl: { x: dw * m, y: dh * (1 - m) }
+    };
+    renderScan();
+}
 function fermerScanner() {
     document.getElementById('scan-overlay').classList.remove('show');
     document.body.style.overflow = '';
     _scan.drag = null;
 }
 function scanReprendre() {
-    var side = _scan.side;
-    fermerScanner();
-    var f = document.getElementById('file-' + side);
-    if (f) f.click();
+    var side = _scan.side; fermerScanner();
+    var f = document.getElementById('file-' + side); if (f) f.click();
 }
 
 function validerScan() {
     try {
         var s = _scan, c = s.corners;
-        var maxSide = 2000;
+        var maxSide = 2200;
         var wscale = Math.min(1, maxSide / Math.max(s.img.naturalWidth, s.img.naturalHeight));
         var sw = Math.round(s.img.naturalWidth * wscale);
         var sh = Math.round(s.img.naturalHeight * wscale);
@@ -2597,10 +2777,8 @@ function validerScan() {
         srcCanvas.getContext('2d').drawImage(s.img, 0, 0, sw, sh);
         var kx = sw / s.dispW, ky = sh / s.dispH;
         var cn = {
-            tl: { x: c.tl.x * kx, y: c.tl.y * ky },
-            tr: { x: c.tr.x * kx, y: c.tr.y * ky },
-            br: { x: c.br.x * kx, y: c.br.y * ky },
-            bl: { x: c.bl.x * kx, y: c.bl.y * ky }
+            tl: { x: c.tl.x * kx, y: c.tl.y * ky }, tr: { x: c.tr.x * kx, y: c.tr.y * ky },
+            br: { x: c.br.x * kx, y: c.br.y * ky }, bl: { x: c.bl.x * kx, y: c.bl.y * ky }
         };
         var wTop = Math.hypot(cn.tr.x - cn.tl.x, cn.tr.y - cn.tl.y);
         var wBot = Math.hypot(cn.br.x - cn.bl.x, cn.br.y - cn.bl.y);
@@ -2608,22 +2786,20 @@ function validerScan() {
         var hRight = Math.hypot(cn.br.x - cn.tr.x, cn.br.y - cn.tr.y);
         var outW = Math.round(Math.max(wTop, wBot));
         var outH = Math.round(Math.max(hLeft, hRight));
-        var cap = 1500, mm = Math.max(outW, outH);
+        var cap = 1600, mm = Math.max(outW, outH);
         if (mm > cap) { outW = Math.round(outW * cap / mm); outH = Math.round(outH * cap / mm); }
         outW = Math.max(60, outW); outH = Math.max(60, outH);
         var warped = warpQuad(srcCanvas, cn, outW, outH, 16);
         enhanceCanvas(warped);
-        var url = warped.toDataURL('image/jpeg', 0.9);
+        var url = warped.toDataURL('image/jpeg', 0.92);
         fermerScanner();
         appliquerPiece(s.side, url);
     } catch (err) {
         console.warn('validerScan :', err);
-        // repli : on garde l'image telle quelle
         try { appliquerPiece(_scan.side, _scan.img.src); } catch (e2) {}
         fermerScanner();
     }
 }
-
 function appliquerPiece(side, url) {
     if (side === 'recto') pieceRectoData = url; else pieceVersoData = url;
     var prev = document.getElementById('preview-' + side);
@@ -2634,11 +2810,10 @@ function appliquerPiece(side, url) {
     checkSectionInscripteur();
 }
 
-// ---- Redressement perspective (pur canvas, grille de triangles) ----
+// ---------- REDRESSEMENT PERSPECTIVE (grille de triangles) ----------
 function warpQuad(srcCanvas, c, outW, outH, grid) {
     grid = grid || 16;
-    var out = document.createElement('canvas');
-    out.width = outW; out.height = outH;
+    var out = document.createElement('canvas'); out.width = outW; out.height = outH;
     var ctx = out.getContext('2d');
     function sp(u, v) {
         var tx = c.tl.x + (c.tr.x - c.tl.x) * u, ty = c.tl.y + (c.tr.y - c.tl.y) * u;
@@ -2692,33 +2867,43 @@ function drawTri(ctx, img, s0, s1, s2, d0, d1, d2) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
-// ---- Amelioration : contraste + luminosite + saturation + nettete ----
+// ---------- FINITION "LISIBLE" (aplatissement lumiere + contraste + nettete) ----------
+function clamp255(v) { return v < 0 ? 0 : v > 255 ? 255 : v; }
 function enhanceCanvas(canvas) {
-    var w = canvas.width, h = canvas.height;
-    var ctx = canvas.getContext('2d');
-    var img = ctx.getImageData(0, 0, w, h);
-    var dt = img.data;
-    var contrast = 1.18, bright = 4, sat = 1.12;
-    for (var p = 0; p < dt.length; p += 4) {
-        var r = dt[p], g = dt[p + 1], b = dt[p + 2];
-        r = (r - 128) * contrast + 128 + bright;
-        g = (g - 128) * contrast + 128 + bright;
-        b = (b - 128) * contrast + 128 + bright;
+    var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
+    // 1) Estimation de l'eclairage (fond) : forte reduction puis re-agrandissement lisse
+    var sw = Math.max(1, Math.round(w / 12)), sh = Math.max(1, Math.round(h / 12));
+    var small = document.createElement('canvas'); small.width = sw; small.height = sh;
+    small.getContext('2d').drawImage(canvas, 0, 0, sw, sh);
+    var up = document.createElement('canvas'); up.width = w; up.height = h;
+    var uctx = up.getContext('2d'); uctx.imageSmoothingEnabled = true; uctx.drawImage(small, 0, 0, w, h);
+    var bg = uctx.getImageData(0, 0, w, h).data;
+    var img = ctx.getImageData(0, 0, w, h), d = img.data;
+    // 2) Division par le fond -> enleve ombres, blanchit le support
+    var target = 238;
+    for (var p = 0; p < d.length; p += 4) {
+        d[p]     = clamp255(d[p]     / (bg[p]     || 1) * target);
+        d[p + 1] = clamp255(d[p + 1] / (bg[p + 1] || 1) * target);
+        d[p + 2] = clamp255(d[p + 2] / (bg[p + 2] || 1) * target);
+    }
+    // 3) Contraste + saturation
+    var contrast = 1.15, sat = 1.18;
+    for (var q = 0; q < d.length; q += 4) {
+        var r = (d[q] - 128) * contrast + 128;
+        var g = (d[q + 1] - 128) * contrast + 128;
+        var b = (d[q + 2] - 128) * contrast + 128;
         var gray = 0.299 * r + 0.587 * g + 0.114 * b;
         r = gray + (r - gray) * sat; g = gray + (g - gray) * sat; b = gray + (b - gray) * sat;
-        dt[p] = r < 0 ? 0 : r > 255 ? 255 : r;
-        dt[p + 1] = g < 0 ? 0 : g > 255 ? 255 : g;
-        dt[p + 2] = b < 0 ? 0 : b > 255 ? 255 : b;
+        d[q] = clamp255(r); d[q + 1] = clamp255(g); d[q + 2] = clamp255(b);
     }
     ctx.putImageData(img, 0, 0);
-    sharpenCanvas(ctx, w, h, 0.7);
+    // 4) Nettete
+    sharpenCanvas(ctx, w, h, 0.9);
 }
 function sharpenCanvas(ctx, w, h, amount) {
     if (w < 3 || h < 3) return;
-    var src = ctx.getImageData(0, 0, w, h);
-    var s = src.data;
-    var dst = ctx.createImageData(w, h);
-    var o = dst.data;
+    var src = ctx.getImageData(0, 0, w, h), s = src.data;
+    var dst = ctx.createImageData(w, h), o = dst.data;
     o.set(s);
     var cW = 1 + 4 * amount, side = amount;
     for (var y = 1; y < h - 1; y++) {
@@ -2726,10 +2911,8 @@ function sharpenCanvas(ctx, w, h, amount) {
             var idx = (y * w + x) * 4;
             for (var ch = 0; ch < 3; ch++) {
                 var v = s[idx + ch] * cW
-                    - s[idx - 4 + ch] * side
-                    - s[idx + 4 + ch] * side
-                    - s[idx - w * 4 + ch] * side
-                    - s[idx + w * 4 + ch] * side;
+                    - s[idx - 4 + ch] * side - s[idx + 4 + ch] * side
+                    - s[idx - w * 4 + ch] * side - s[idx + w * 4 + ch] * side;
                 o[idx + ch] = v < 0 ? 0 : v > 255 ? 255 : v;
             }
             o[idx + 3] = 255;
@@ -3038,7 +3221,7 @@ function scrollToElement(id) {
 
     <!-- ===== Modal scanner : recadrage ajustable de la piece ===== -->
     <div class="scan-overlay" id="scan-overlay">
-        <div class="scan-head"><b>📄 Ajuste le cadre sur la pièce</b>Pose les 4 coins sur les bords du document, puis valide.</div>
+        <div class="scan-head"><b>📄 Cadre détecté automatiquement</b>Ajuste les coins si besoin, puis valide. « Tout » = pièce = toute l'image.</div>
         <div class="scan-stage" id="scan-stage">
             <img id="scan-img" alt="Document à cadrer">
             <svg class="scan-svg" id="scan-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -3055,9 +3238,10 @@ function scrollToElement(id) {
         </div>
         <div class="scan-actions">
             <button type="button" class="scan-btn reprendre" onclick="scanReprendre()">🔄 Reprendre</button>
+            <button type="button" class="scan-btn tout" onclick="scanTout()">⛶ Tout</button>
             <button type="button" class="scan-btn valider" onclick="validerScan()">✓ Valider le scan</button>
         </div>
-        <div class="scan-hint2">Astuce : rapproche bien les coins des bords réels de la pièce pour un scan net.</div>
+        <div class="scan-hint2" id="scan-status">Astuce : rapproche bien les coins des bords réels de la pièce pour un scan net.</div>
     </div>
 
 </body>
