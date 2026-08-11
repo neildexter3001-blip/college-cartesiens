@@ -2871,33 +2871,53 @@ function drawTri(ctx, img, s0, s1, s2, d0, d1, d2) {
 function clamp255(v) { return v < 0 ? 0 : v > 255 ? 255 : v; }
 function enhanceCanvas(canvas) {
     var w = canvas.width, h = canvas.height, ctx = canvas.getContext('2d');
-    // 1) Estimation de l'eclairage (fond) : forte reduction puis re-agrandissement lisse
-    var sw = Math.max(1, Math.round(w / 12)), sh = Math.max(1, Math.round(h / 12));
-    var small = document.createElement('canvas'); small.width = sw; small.height = sh;
-    small.getContext('2d').drawImage(canvas, 0, 0, sw, sh);
-    var up = document.createElement('canvas'); up.width = w; up.height = h;
-    var uctx = up.getContext('2d'); uctx.imageSmoothingEnabled = true; uctx.drawImage(small, 0, 0, w, h);
-    var bg = uctx.getImageData(0, 0, w, h).data;
-    var img = ctx.getImageData(0, 0, w, h), d = img.data;
-    // 2) Division par le fond -> enleve ombres, blanchit le support
-    var target = 238;
-    for (var p = 0; p < d.length; p += 4) {
-        d[p]     = clamp255(d[p]     / (bg[p]     || 1) * target);
-        d[p + 1] = clamp255(d[p + 1] / (bg[p + 1] || 1) * target);
-        d[p + 2] = clamp255(d[p + 2] / (bg[p + 2] || 1) * target);
+    var img = ctx.getImageData(0, 0, w, h), d = img.data, N = d.length, total = w * h;
+
+    // 1) AUTO-NIVEAUX par canal (percentiles) -> restaure noirs francs + fond propre
+    for (var c = 0; c < 3; c++) {
+        var hist = new Uint32Array(256);
+        for (var p = c; p < N; p += 4) hist[d[p]]++;
+        var cut = total * 0.006, acc = 0, lo = 0, hi = 255, v;
+        for (v = 0; v < 256; v++) { acc += hist[v]; if (acc > cut) { lo = v; break; } }
+        acc = 0;
+        for (v = 255; v >= 0; v--) { acc += hist[v]; if (acc > cut) { hi = v; break; } }
+        if (hi - lo < 20) { lo = 0; hi = 255; }
+        var range = hi - lo;
+        for (var q = c; q < N; q += 4) {
+            var nv = (d[q] - lo) * 255 / range;
+            d[q] = nv < 0 ? 0 : nv > 255 ? 255 : nv;
+        }
     }
-    // 3) Contraste + saturation
-    var contrast = 1.15, sat = 1.18;
-    for (var q = 0; q < d.length; q += 4) {
-        var r = (d[q] - 128) * contrast + 128;
-        var g = (d[q + 1] - 128) * contrast + 128;
-        var b = (d[q + 2] - 128) * contrast + 128;
+
+    // 2) CONTRASTE LOCAL (grand rayon) -> fait ressortir le texte faible (cle de la lisibilite)
+    var L = new Float32Array(total);
+    for (var i = 0, k = 0; i < total; i++, k += 4) L[i] = 0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2];
+    var rad = Math.max(4, Math.round(Math.min(w, h) / 20));
+    var Lb = boxBlur(L, w, h, rad);
+    var localGain = 0.85;
+    for (var i2 = 0, k2 = 0; i2 < total; i2++, k2 += 4) {
+        var delta = (L[i2] - Lb[i2]) * localGain;
+        d[k2]     = clamp255(d[k2]     + delta);
+        d[k2 + 1] = clamp255(d[k2 + 1] + delta);
+        d[k2 + 2] = clamp255(d[k2 + 2] + delta);
+    }
+
+    // 3) CONTRASTE GLOBAL doux + GAMMA (densifie le texte) + SATURATION
+    var contrast = 1.14, gamma = 1.08, sat = 1.14;
+    for (var p3 = 0; p3 < N; p3 += 4) {
+        var r = (d[p3]     - 128) * contrast + 128;
+        var g = (d[p3 + 1] - 128) * contrast + 128;
+        var b = (d[p3 + 2] - 128) * contrast + 128;
+        r = 255 * Math.pow(clamp255(r) / 255, gamma);
+        g = 255 * Math.pow(clamp255(g) / 255, gamma);
+        b = 255 * Math.pow(clamp255(b) / 255, gamma);
         var gray = 0.299 * r + 0.587 * g + 0.114 * b;
         r = gray + (r - gray) * sat; g = gray + (g - gray) * sat; b = gray + (b - gray) * sat;
-        d[q] = clamp255(r); d[q + 1] = clamp255(g); d[q + 2] = clamp255(b);
+        d[p3] = clamp255(r); d[p3 + 1] = clamp255(g); d[p3 + 2] = clamp255(b);
     }
     ctx.putImageData(img, 0, 0);
-    // 4) Nettete
+
+    // 4) NETTETE
     sharpenCanvas(ctx, w, h, 0.9);
 }
 function sharpenCanvas(ctx, w, h, amount) {
