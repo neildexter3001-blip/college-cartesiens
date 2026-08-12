@@ -1867,7 +1867,10 @@ async function chargerClasses() {
     }
 }
 
-// Rafraîchissement automatique des classes toutes les 5 secondes
+// Rafraîchissement automatique des classes toutes les 60 secondes
+// (réduit de 5s à 60s pour économiser le quota de transfert de données Neon —
+// un rafraîchissement toutes les 5s multiplié par plusieurs parents connectés
+// en simultané épuisait rapidement le quota gratuit de la base de données).
 var classeSelectOuvert = false;
 var classesPrecedenteTimeout = null;
 
@@ -1880,7 +1883,7 @@ window.addEventListener('load', function () {
     setInterval(function () {
         if (classeSelectOuvert) return;
         chargerClasses();
-    }, 5000);
+    }, 60000);
 });
 
 document.addEventListener('visibilitychange', function () {
@@ -2070,7 +2073,9 @@ async function streamVerrouillage() {
         console.warn('streamVerrouillage échoué (réessai dans 3s) :', err.message);
     }
 }
-setInterval(streamVerrouillage, 3000);
+// Vérification du verrouillage toutes les 30 secondes (réduit de 3s à 30s
+// pour économiser le quota de transfert de données Neon).
+setInterval(streamVerrouillage, 30000);
 
 // ============================================================
 //  REMPLIR / VIDER LES CHAMPS
