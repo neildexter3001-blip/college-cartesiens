@@ -3285,7 +3285,11 @@ window.addEventListener('load', async () => {
     await loadInscriptions();
 
     // 🔄 Rafraîchissement automatique toutes les 5 secondes (silencieux)
-    setInterval(refreshSilencieux, 5000);
+    // Rafraîchissement toutes les 20 secondes (réduit de 5s à 20s pour
+    // économiser le quota de transfert de données Neon — cette requête
+    // recharge la liste complète des élèves et tournait en continu tant
+    // que la page admin restait ouverte).
+    setInterval(refreshSilencieux, 20000);
 });
 
 // 🔄 Rafraîchir aussi instantanément dès que l'admin revient sur l'onglet
